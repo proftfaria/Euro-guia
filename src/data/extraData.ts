@@ -20,7 +20,11 @@ export const translations = {
       next: "Próxima",
       finish: "Finalizar",
       achievements: "Conquistas",
-      feedback: "Feedback Formativo"
+      feedback: "Feedback Formativo",
+      certificate: "Certificado de Mérito",
+      certSubtitle: "Este documento atesta os conhecimentos demonstrados sobre a União Europeia.",
+      certIndicators: "Indicadores de Desempenho",
+      print: "Imprimir Certificado"
     },
     badges: {
       master_hist: "Mestre da História",
@@ -48,7 +52,11 @@ export const translations = {
       next: "Next",
       finish: "Finish",
       achievements: "Achievements",
-      feedback: "Formative Feedback"
+      feedback: "Formative Feedback",
+      certificate: "Certificate of Merit",
+      certSubtitle: "This document attests to the knowledge demonstrated about the European Union.",
+      certIndicators: "Performance Indicators",
+      print: "Print Certificate"
     },
     badges: {
       master_hist: "History Master",
@@ -76,7 +84,11 @@ export const translations = {
       next: "Suivant",
       finish: "Terminer",
       achievements: "Hauts Faits",
-      feedback: "Feedback Formatif"
+      feedback: "Feedback Formatif",
+      certificate: "Certificat de Mérite",
+      certSubtitle: "Ce document atteste des connaissances démontrées sur l'Union européenne.",
+      certIndicators: "Indicateurs de Performance",
+      print: "Imprimer le Certificat"
     },
     badges: {
       master_hist: "Maître de l'Histoire",
@@ -210,6 +222,101 @@ export const mainQuiz = [
       pt: "O número 12 é um símbolo de perfeição e plenitude, não representa o número de países.",
       en: "The number 12 is a symbol of perfection and fullness, not the number of countries.",
       fr: "Le chiffre 12 est un symbole de perfection et de plénitude, il não representa pas le nombre de pays."
+    }
+  },
+  {
+    id: 6,
+    question: {
+      pt: "Qual é o lema oficial da União Europeia?",
+      en: "What is the official motto of the European Union?",
+      fr: "Quelle est la devise officielle de l'Union européenne ?"
+    },
+    options: [
+      { id: 'a', text: { pt: "Unida na Diversidade", en: "United in Diversity", fr: "Unie dans la diversité" } },
+      { id: 'b', text: { pt: "Paz e Prosperidade", en: "Peace and Prosperity", fr: "Paix et Prospérité" } },
+      { id: 'c', text: { pt: "Liberdade, Igualdade, Fraternidade", en: "Liberty, Equality, Fraternity", fr: "Liberté, Égalité, Fraternité" } }
+    ],
+    correct: 'a',
+    explanation: {
+      pt: "O lema 'Unida na Diversidade' foi adotado no ano 2000.",
+      en: "The motto 'United in Diversity' was adopted in 2000.",
+      fr: "La devise 'Unie dans la diversité' a été adoptée em l'an 2000."
+    }
+  },
+  {
+    id: 7,
+    question: {
+      pt: "Quantas estrelas tem a bandeira europeia?",
+      en: "How many stars are on the European flag?",
+      fr: "Combien d'étoiles le drapeau européen compte-t-il ?"
+    },
+    options: [
+      { id: 'a', text: { pt: "12", en: "12", fr: "12" } },
+      { id: 'b', text: { pt: "15", en: "15", fr: "15" } },
+      { id: 'c', text: { pt: "27", en: "27", fr: "27" } }
+    ],
+    correct: 'a',
+    explanation: {
+      pt: "São sempre 12 estrelas, simbolizando unidade, solidariedade e harmonia.",
+      en: "There are always 12 stars, symbolizing unity, solidarity and harmony.",
+      fr: "Il y a toujours 12 étoiles, symbolisant l'unité, la solidarité et l'harmonie."
+    }
+  },
+  {
+    id: 8,
+    question: {
+      pt: "Quem elege os membros do Parlamento Europeu?",
+      en: "Who elects the members of the European Parliament?",
+      fr: "Qui élit les membres du Parlement européen ?"
+    },
+    options: [
+      { id: 'a', text: { pt: "Os cidadãos da UE", en: "The EU citizens", fr: "Les citoyens de l'UE" } },
+      { id: 'b', text: { pt: "Os governos nacionais", en: "The national governments", fr: "Les gouvernements nationaux" } },
+      { id: 'c', text: { pt: "O Conselho Europeu", en: "The European Council", fr: "Le Conseil européen" } }
+    ],
+    correct: 'a',
+    explanation: {
+      pt: "As eleições decorrem de 5 em 5 anos por sufrágio universal direto.",
+      en: "Elections take place every 5 years by direct universal suffrage.",
+      fr: "Les élections ont lieu tous les 5 ans au suffrage universel direct."
+    }
+  },
+  {
+    id: 9,
+    question: {
+      pt: "Qual foi a primeira comunidade a ser criada (1951)?",
+      en: "What was the first community to be created (1951)?",
+      fr: "Quelle fut la première communauté créée (1951) ?"
+    },
+    options: [
+      { id: 'a', text: { pt: "CECA (Carvão e Aço)", en: "ECSC (Coal and Steel)", fr: "CECA (Charbon et Acier)" } },
+      { id: 'b', text: { pt: "CEE (Económica)", en: "EEC (Economic)", fr: "CEE (Économique)" } },
+      { id: 'c', text: { pt: "Euratom (Energia Atómica)", en: "Euratom (Atomic Energy)", fr: "Euratom (Énergie Atomique)" } }
+    ],
+    correct: 'a',
+    explanation: {
+      pt: "A Comunidade Europeia do Carvão e do Aço foi a base da integração.",
+      en: "The European Coal and Steel Community was the foundation of integration.",
+      fr: "La Communidade européenne du charbon et de l'acier a été le fondement de l'intégration."
+    }
+  },
+  {
+    id: 10,
+    question: {
+      pt: "Onde se localiza a sede da Comissão Europeia?",
+      en: "Where is the headquarters of the European Commission located?",
+      fr: "Où se situe le siège de la Commission européenne ?"
+    },
+    options: [
+      { id: 'a', text: { pt: "Bruxelas", en: "Brussels", fr: "Bruxelles" } },
+      { id: 'b', text: { pt: "Estrasburgo", en: "Strasbourg", fr: "Strasbourg" } },
+      { id: 'c', text: { pt: "Luxemburgo", en: "Luxembourg", fr: "Luxembourg" } }
+    ],
+    correct: 'a',
+    explanation: {
+      pt: "O edifício Berlaymont em Bruxelas é a sede da Comissão.",
+      en: "The Berlaymont building in Brussels is the Commission's headquarters.",
+      fr: "Le bâtiment Berlaymont à Bruxelles est le siège de la Commission."
     }
   }
 ];

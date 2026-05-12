@@ -23,12 +23,97 @@ import {
   ShieldCheck,
   Search,
   MessageCircle,
-  BarChart3
+  BarChart3,
+  Printer,
+  Stamp
 } from "lucide-react";
 import { euCountries, euTimeline, euInstitutions } from "./data/euData";
 import { translations, glossary, mainQuiz } from "./data/extraData";
 
 // --- Sub-components ---
+
+const Certificate = ({ 
+  userScore, 
+  totalQuestions, 
+  geoScore, 
+  adhScore, 
+  badgesCount, 
+  lang 
+}: { 
+  userScore: number, 
+  totalQuestions: number, 
+  geoScore: number, 
+  adhScore: number, 
+  badgesCount: number,
+  lang: 'pt' | 'en' | 'fr'
+}) => {
+  const t = translations[lang];
+  const date = new Date().toLocaleDateString(lang === 'pt' ? 'pt-PT' : lang === 'en' ? 'en-GB' : 'fr-FR');
+  
+  return (
+    <div className="certificate-container bg-white p-12 border-8 border-eu-blue shadow-2xl relative overflow-hidden max-w-4xl mx-auto my-8 print:border-4 print:shadow-none print:m-0">
+      {/* Decorative Ornaments */}
+      <div className="absolute top-0 right-0 w-32 h-32 bg-eu-gold/10 -mr-16 -mt-16 rotate-45 border border-eu-gold/20" />
+      <div className="absolute bottom-0 left-0 w-32 h-32 bg-eu-gold/10 -ml-16 -mb-16 rotate-45 border border-eu-gold/20" />
+      
+      <div className="relative z-10 text-center space-y-8">
+        <header className="flex flex-col items-center gap-4">
+          <div className="flex gap-1 mb-2">
+            {[...Array(12)].map((_, i) => (
+              <div key={i} className="w-2 h-2 bg-eu-blue rounded-full" />
+            ))}
+          </div>
+          <h1 className="heading-serif text-4xl text-eu-blue uppercase tracking-[0.2em]">{t.common.certificate}</h1>
+          <div className="w-24 h-1 bg-eu-gold mx-auto" />
+        </header>
+
+        <section className="space-y-6 py-8">
+          <p className="text-xl italic font-light text-slate-600">
+            {t.common.certSubtitle}
+          </p>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-8 border-y border-slate-100">
+            <div className="space-y-1">
+              <p className="micro-label opacity-40">Super Quiz</p>
+              <p className="heading-serif text-3xl text-eu-blue">{userScore}/{totalQuestions}</p>
+            </div>
+            <div className="space-y-1">
+              <p className="micro-label opacity-40">Geografia</p>
+              <p className="heading-serif text-3xl text-eu-blue">{geoScore}</p>
+            </div>
+            <div className="space-y-1">
+              <p className="micro-label opacity-40">História</p>
+              <p className="heading-serif text-3xl text-eu-blue">{adhScore}</p>
+            </div>
+            <div className="space-y-1">
+              <p className="micro-label opacity-40">Troféus</p>
+              <p className="heading-serif text-3xl text-eu-blue">{badgesCount}</p>
+            </div>
+          </div>
+        </section>
+
+        <footer className="pt-12 flex justify-between items-end">
+          <div className="text-left space-y-2">
+            <p className="micro-label opacity-40">Data de Emissão</p>
+            <p className="heading-serif text-xl">{date}</p>
+          </div>
+          
+          <div className="flex flex-col items-center">
+             <div className="w-20 h-20 bg-eu-blue rounded-full border-4 border-white shadow-lg flex items-center justify-center text-eu-gold mb-2">
+                <Stamp size={40} />
+             </div>
+             <p className="micro-label font-bold text-eu-blue">Selo EuroGuia</p>
+          </div>
+
+          <div className="text-right space-y-2">
+            <p className="micro-label opacity-40">Identificador</p>
+            <p className="font-mono text-xs text-slate-400">EU-CERT-{Math.random().toString(36).substring(7).toUpperCase()}</p>
+          </div>
+        </footer>
+      </div>
+    </div>
+  );
+};
 
 const LanguageSwitcher = ({ current, setLang }: { current: string, setLang: (l: 'pt' | 'en' | 'fr') => void }) => (
   <div className="flex gap-2 mb-8 items-center bg-editorial-bg p-2 border border-editorial-border">
@@ -142,6 +227,7 @@ export default function App() {
   const [superQuizIndex, setSuperQuizIndex] = useState(0);
   const [superQuizScore, setSuperQuizScore] = useState(0);
   const [superQuizFeedback, setSuperQuizFeedback] = useState<string | null>(null);
+  const [showCertificate, setShowCertificate] = useState(false);
 
   const handleSuperQuizAnswer = (optionId: string) => {
     const currentQ = mainQuiz[superQuizIndex];
@@ -153,6 +239,14 @@ export default function App() {
       setSuperQuizFeedback(`Incorreto. ${currentQ.explanation[lang]}`);
     }
   };
+
+  const restartQuiz = () => {
+    setSuperQuizIndex(0);
+    setSuperQuizScore(0);
+    setSuperQuizFeedback(null);
+    setShowCertificate(false);
+  };
+
 
   // --- Adesão Quiz State ---
   const [adhScore, setAdhScore] = useState(0);
@@ -610,59 +704,90 @@ export default function App() {
               </header>
 
               <div className="max-w-3xl mx-auto">
-                 <div className="bg-white p-12 border border-editorial-border shadow-editorial space-y-10">
-                    <div className="space-y-4">
-                      <p className="micro-label opacity-40">Questão {superQuizIndex + 1}</p>
-                      <h3 className="heading-serif text-4xl">{mainQuiz[superQuizIndex].question[lang]}</h3>
-                    </div>
+                 {showCertificate ? (
+                   <motion.div
+                     initial={{ opacity: 0, scale: 0.9 }}
+                     animate={{ opacity: 1, scale: 1 }}
+                     className="space-y-8"
+                   >
+                     <Certificate 
+                       userScore={superQuizScore}
+                       totalQuestions={mainQuiz.length}
+                       geoScore={quizScore}
+                       adhScore={adhScore}
+                       badgesCount={badges.length}
+                       lang={lang}
+                     />
+                     <div className="flex gap-4 justify-center print:hidden">
+                       <button 
+                         onClick={() => window.print()}
+                         className="flex items-center gap-2 px-8 py-4 bg-eu-blue text-white heading-serif text-lg hover:bg-slate-900 transition-all shadow-xl"
+                       >
+                         <Printer size={20} /> {t.common.print}
+                       </button>
+                       <button 
+                         onClick={restartQuiz}
+                         className="px-8 py-4 border border-editorial-border bg-white heading-serif text-lg hover:bg-slate-50 transition-all shadow-xl"
+                       >
+                         {t.common.finish}
+                       </button>
+                     </div>
+                   </motion.div>
+                 ) : (
+                   <div className="bg-white p-12 border border-editorial-border shadow-editorial space-y-10">
+                     <div className="space-y-4">
+                       <p className="micro-label opacity-40">Questão {superQuizIndex + 1} / {mainQuiz.length}</p>
+                       <h3 className="heading-serif text-4xl">{mainQuiz[superQuizIndex].question[lang]}</h3>
+                     </div>
 
-                    <div className="space-y-4">
-                      {mainQuiz[superQuizIndex].options.map((opt) => (
-                        <button
-                          key={opt.id}
-                          onClick={() => handleSuperQuizAnswer(opt.id)}
-                          disabled={!!superQuizFeedback}
-                          className={`w-full p-6 border text-left flex justify-between items-center transition-all group ${
-                            superQuizFeedback ? (opt.id === mainQuiz[superQuizIndex].correct ? 'border-green-500 bg-green-50' : 'opacity-20') : 'hover:border-eu-blue hover:bg-slate-50'
-                          }`}
-                        >
-                          <span className="heading-serif text-xl">{opt.text[lang]}</span>
-                          <ChevronRight size={16} className="text-eu-blue opacity-0 group-hover:opacity-100" />
-                        </button>
-                      ))}
-                    </div>
+                     <div className="space-y-4">
+                       {mainQuiz[superQuizIndex].options.map((opt) => (
+                         <button
+                           key={opt.id}
+                           onClick={() => handleSuperQuizAnswer(opt.id)}
+                           disabled={!!superQuizFeedback}
+                           className={`w-full p-6 border text-left flex justify-between items-center transition-all group ${
+                             superQuizFeedback ? (opt.id === mainQuiz[superQuizIndex].correct ? 'border-green-500 bg-green-50' : 'opacity-20') : 'hover:border-eu-blue hover:bg-slate-50'
+                           }`}
+                         >
+                           <span className="heading-serif text-xl">{opt.text[lang]}</span>
+                           <ChevronRight size={16} className="text-eu-blue opacity-0 group-hover:opacity-100" />
+                         </button>
+                       ))}
+                     </div>
 
-                    {superQuizFeedback && (
-                      <motion.div 
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="p-8 bg-eu-blue/5 border-l-4 border-eu-blue"
-                      >
-                        <p className="micro-label text-eu-blue mb-2 flex items-center gap-2 italic">
-                          <MessageCircle size={14} /> {t.common.feedback}
-                        </p>
-                        <p className="text-slate-600 italic font-light">{superQuizFeedback}</p>
-                        <button 
-                          onClick={() => {
-                            setSuperQuizFeedback(null);
-                            if (superQuizIndex < mainQuiz.length - 1) {
-                              setSuperQuizIndex(prev => prev + 1);
-                            } else {
-                              setActiveTab('inicio');
-                            }
-                          }}
-                          className="mt-8 text-[10px] font-bold uppercase tracking-widest border-b border-editorial-ink"
-                        >
-                          {superQuizIndex < mainQuiz.length - 1 ? t.common.next : t.common.finish}
-                        </button>
-                      </motion.div>
-                    )}
-                 </div>
+                     {superQuizFeedback && (
+                       <motion.div 
+                         initial={{ opacity: 0, y: 10 }}
+                         animate={{ opacity: 1, y: 0 }}
+                         className="p-8 bg-eu-blue/5 border-l-4 border-eu-blue"
+                       >
+                         <p className="micro-label text-eu-blue mb-2 flex items-center gap-2 italic">
+                           <MessageCircle size={14} /> {t.common.feedback}
+                         </p>
+                         <p className="text-slate-600 italic font-light">{superQuizFeedback}</p>
+                         <button 
+                           onClick={() => {
+                             setSuperQuizFeedback(null);
+                             if (superQuizIndex < mainQuiz.length - 1) {
+                               setSuperQuizIndex(prev => prev + 1);
+                             } else {
+                               setShowCertificate(true);
+                             }
+                           }}
+                           className="mt-8 text-[10px] font-bold uppercase tracking-widest border-b border-editorial-ink"
+                         >
+                           {superQuizIndex < mainQuiz.length - 1 ? t.common.next : t.common.finish}
+                         </button>
+                       </motion.div>
+                     )}
+                   </div>
+                 )}
               </div>
             </motion.div>
           )}
 
-            {/* --- Adesão Tab --- */}
+          {/* --- Adesão Tab --- */}
             {activeTab === 'adesao' && (
             <motion.div 
               key="adesao"
