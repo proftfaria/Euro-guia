@@ -159,7 +159,7 @@ export default function App() {
     { id: 'historia', label: 'Cronologia', icon: History },
     { id: 'instituicoes', label: 'Instituições', icon: Landmark },
     { id: 'cidadania', label: 'Cidadania', icon: Users },
-    { id: 'guia', label: 'Guia & GitHub', icon: BookOpen },
+    { id: 'guia', label: 'Guia do Utilizador', icon: BookOpen },
   ];
 
   return (
@@ -196,7 +196,7 @@ export default function App() {
         <div className="mt-8">
           <div className="p-6 border border-editorial-border bg-white shadow-editorial">
             <h4 className="micro-label text-eu-blue mb-2">Suporte e Ajuda</h4>
-            <p className="text-[10px] leading-relaxed opacity-60">Consulte o guia para aprender a navegar e atualizar no GitHub.</p>
+            <p className="text-[10px] leading-relaxed opacity-60">Consulte o guia para aprender a navegar nesta edição digital.</p>
             <button 
               onClick={() => setActiveTab('guia')}
               className="mt-4 text-[10px] uppercase font-bold text-eu-blue border-b border-eu-blue/20"
@@ -574,9 +574,9 @@ export default function App() {
             >
               <header className="text-center max-w-3xl mx-auto space-y-4 border-b border-editorial-ink pb-12">
                 <p className="micro-label text-eu-blue opacity-100">Manual • Ajuda ao Utilizador</p>
-                <h2 className="heading-serif text-6xl">Instruções e Atualização</h2>
+                <h2 className="heading-serif text-6xl">Instruções de Navegação</h2>
                 <p className="text-slate-500 text-lg font-light leading-relaxed">
-                  Saiba como navegar nesta aplicação e como sincronizar as suas alterações com o GitHub.
+                  Aprenda a interagir com este manual informativo e a explorar todo o conteúdo disponível.
                 </p>
               </header>
 
@@ -601,6 +601,9 @@ export default function App() {
                       Utilize o menu lateral para navegar entre as secções de história, instituições e direitos de cidadania.
                     </p>
                   </div>
+                </div>
+
+                <div className="space-y-8">
                   <div className="asymmetric-card border-l-eu-gold">
                     <div className="flex items-center gap-4 mb-4">
                       <Calendar className="text-eu-blue" />
@@ -610,27 +613,15 @@ export default function App() {
                       Neste jogo, deve selecionar todos os países que entraram na UE no ano apresentado. Atenção: alguns anos tiveram múltiplos países a aderir em simultâneo!
                     </p>
                   </div>
-                </div>
 
-                <div className="space-y-8">
-                  <div className="asymmetric-card bg-slate-900 text-white">
+                  <div className="asymmetric-card">
                     <div className="flex items-center gap-4 mb-4">
-                      <div className="p-2 bg-eu-gold text-slate-900 rounded-sm">
-                         <BookOpen size={20} />
-                      </div>
-                      <h3 className="heading-serif text-2xl text-white">Como Atualizar no GitHub?</h3>
+                      <Users className="text-eu-blue" />
+                      <h3 className="heading-serif text-2xl">Resolução</h3>
                     </div>
-                    <div className="space-y-4">
-                      <p className="text-xs text-slate-400 font-light leading-relaxed">
-                        Como já configurámos as <strong>GitHub Actions</strong> no seu repositório, o processo é automático sempre que faz o "Push" das alterações:
-                      </p>
-                      <ol className="text-xs space-y-4 list-decimal pl-4 text-slate-300">
-                        <li>No painel lateral do AI Studio, selecione o ícone de <strong>GitHub</strong>.</li>
-                        <li>Escreva uma mensagem breve do que alterou (ex: "Atualização do jogo de capitais").</li>
-                        <li>Clique no botão <strong>Commit & Push</strong>.</li>
-                        <li>O GitHub detetará as alterações e iniciará automaticamente a publicação em 1-2 minutos.</li>
-                      </ol>
-                    </div>
+                    <p className="text-sm text-slate-600 leading-relaxed">
+                      Para uma experiência editorial completa e legível, recomendamos a visualização em ecrãs com largura superior a 1024px (desktop ou tablet em modo paisagem).
+                    </p>
                   </div>
                 </div>
               </div>
@@ -687,7 +678,7 @@ export default function App() {
               </nav>
               <div className="mt-8 border border-editorial-border bg-white p-4 shadow-editorial">
                 <p className="micro-label text-eu-blue mb-2">Suporte</p>
-                <p className="text-[10px] opacity-60">Consulte o guia para aprender a navegar e atualizar.</p>
+                <p className="text-[10px] opacity-60">Consulte o guia para aprender a navegar.</p>
                 <button 
                   onClick={() => { setActiveTab('guia'); setIsSidebarOpen(false); }}
                   className="mt-4 text-[10px] font-bold uppercase border-b border-eu-blue"
