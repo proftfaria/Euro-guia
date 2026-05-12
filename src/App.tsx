@@ -211,7 +211,7 @@ export default function App() {
   // --- Capitais Quiz State ---
   const [quizScore, setQuizScore] = useState(0);
   const [quizQuestion, setQuizQuestion] = useState<{country: any, options: any[]} | null>(null);
-  const [feedback, setFeedback] = useState<{ msg: string, type: 'success' | 'error' | null }>({ msg: "", type: null });
+  const [feedback, setFeedback] = useState<{ msg: string, type: 'success' | 'error' | null, explanation?: string }>({ msg: "", type: null });
 
   const generateQuestion = () => {
     const randomCountry = euCountries[Math.floor(Math.random() * euCountries.length)];
@@ -252,7 +252,7 @@ export default function App() {
   const [adhScore, setAdhScore] = useState(0);
   const [adhQuestion, setAdhQuestion] = useState<{year: number, options: any[], targets: string[]} | null>(null);
   const [adhSelectedIds, setAdhSelectedIds] = useState<string[]>([]);
-  const [adhFeedback, setAdhFeedback] = useState<{ msg: string, type: 'success' | 'error' | null }>({ msg: "", type: null });
+  const [adhFeedback, setAdhFeedback] = useState<{ msg: string, type: 'success' | 'error' | null, explanation?: string }>({ msg: "", type: null });
 
   const generateAdhQuestion = () => {
     const uniqueYears = Array.from(new Set(euCountries.map(c => c.joined))).sort((a, b) => a - b);
@@ -281,24 +281,48 @@ export default function App() {
     const isCorrect = adhQuestion.targets.length === adhSelectedIds.length && 
                      adhQuestion.targets.every(id => adhSelectedIds.includes(id));
     
+    const year = adhQuestion.year;
+    const joinedCountries = euCountries.filter(c => c.joined === year).map(c => `${c.flag} ${c.name}`).join(', ');
+    const explanation = `Em ${year}, os países que aderiram à UE foram: ${joinedCountries}.`;
+
     if (isCorrect) {
       setAdhScore(prev => prev + 1);
       if (adhScore + 1 >= 5) addBadge('geo_elite');
-      setAdhFeedback({ msg: t.common.correct, type: 'success' });
-      setTimeout(generateAdhQuestion, 2000);
+      setAdhFeedback({ 
+        msg: t.common.correct, 
+        type: 'success',
+        explanation 
+      });
     } else {
-      setAdhFeedback({ msg: t.common.incorrect, type: 'error' });
+      setAdhFeedback({ 
+        msg: t.common.incorrect, 
+        type: 'error',
+        explanation 
+      });
     }
   };
 
   const handleAnswer = (selectedId: string) => {
-    if (quizQuestion?.country.id === selectedId) {
+    if (!quizQuestion) return;
+    const isCorrect = quizQuestion.country.id === selectedId;
+    const country = quizQuestion.country;
+    const monument = country.monuments[Math.floor(Math.random() * country.monuments.length)];
+    const explanation = `A capital de ${country.name} (${country.flag}) é ${country.capital}. Sabias que um dos seus monumentos mais famosos é o ${monument}?`;
+
+    if (isCorrect) {
       setQuizScore(prev => prev + 1);
       if (quizScore + 1 >= 10) addBadge('geo_elite');
-      setFeedback({ msg: t.common.correct, type: 'success' });
-      setTimeout(generateQuestion, 2000);
+      setFeedback({ 
+        msg: t.common.correct, 
+        type: 'success',
+        explanation 
+      });
     } else {
-      setFeedback({ msg: t.common.incorrect, type: 'error' });
+      setFeedback({ 
+        msg: t.common.incorrect, 
+        type: 'error',
+        explanation 
+      });
     }
   };
 
@@ -554,99 +578,27 @@ export default function App() {
                       <AnimatePresence>
                         {feedback.msg && (
                           <motion.div 
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            className={`p-4 text-sm font-bold uppercase tracking-widest border ${
-                              feedback.type === 'success' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className={`p-8 border-l-4 text-left space-y-4 ${
+                              feedback.type === 'success' ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'
                             }`}
                           >
-                            {feedback.msg}
+                            <p className={`micro-label flex items-center gap-2 ${feedback.type === 'success' ? 'text-green-700' : 'text-red-700'}`}>
+                              <MessageCircle size={14} /> {t.common.feedback}
+                            </p>
+                            <p className="text-slate-600 italic font-light leading-relaxed">
+                              {feedback.explanation}
+                            </p>
+                            <button 
+                              onClick={generateQuestion}
+                              className="text-[10px] font-bold uppercase tracking-widest border-b border-editorial-ink pb-1"
+                            >
+                              {t.common.next}
+                            </button>
                           </motion.div>
                         )}
                       </AnimatePresence>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            </motion.div>
-          )}
-
-          {/* --- Adesão --- */}
-          {activeTab === 'adesao' && (
-            <motion.div 
-              key="adesao"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="space-y-12"
-            >
-              <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-editorial-ink pb-12">
-                <div className="space-y-4">
-                  <p className="micro-label text-eu-blue opacity-100">{t.nav.adesao}</p>
-                  <h2 className="heading-serif text-5xl lg:text-7xl">Ciclos de Adesão</h2>
-                </div>
-                <div className="flex items-center gap-4 bg-white px-6 py-3 border border-editorial-border shadow-editorial">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{t.common.score}</span>
-                  <span className="heading-serif text-3xl text-eu-blue">{adhScore}</span>
-                </div>
-              </header>
-
-              <div className="max-w-4xl mx-auto">
-                <AnimatePresence mode="wait">
-                  {adhQuestion && (
-                    <motion.div 
-                      key={adhQuestion.year}
-                      initial={{ opacity: 0, scale: 0.98 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className="bg-white p-12 border border-editorial-border shadow-editorial text-center space-y-10"
-                    >
-                      <div className="space-y-4">
-                        <p className="micro-label opacity-40">Selecione os países que aderiram em:</p>
-                        <h3 className="heading-serif text-8xl text-eu-blue">{adhQuestion.year}</h3>
-                      </div>
-
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                        {adhQuestion.options.map((country: any) => (
-                          <button
-                            key={country.id}
-                            onClick={() => handleAdhToggle(country.id)}
-                            className={`p-6 border transition-all flex flex-col items-center gap-4 group ${
-                              adhSelectedIds.includes(country.id) 
-                              ? 'bg-eu-blue border-eu-blue text-white shadow-lg translate-y-[-4px]' 
-                              : 'bg-slate-50 border-editorial-border hover:border-eu-blue/40'
-                            }`}
-                          >
-                            <span className="text-4xl">{country.flag}</span>
-                            <span className="heading-serif text-xl">{country.name}</span>
-                            {adhSelectedIds.includes(country.id) && (
-                              <CheckCircle2 size={16} className="text-eu-gold animate-in zoom-in" />
-                            )}
-                          </button>
-                        ))}
-                      </div>
-
-                      <div className="pt-6 space-y-6">
-                        <button
-                          onClick={checkAdhAnswer}
-                          disabled={adhSelectedIds.length === 0}
-                          className="w-full md:w-auto px-12 py-4 bg-editorial-ink text-white heading-serif text-xl uppercase tracking-widest hover:bg-eu-blue disabled:opacity-20 transition-all"
-                        >
-                          Verificar Resposta
-                        </button>
-
-                        <AnimatePresence>
-                          {adhFeedback.msg && (
-                            <motion.div 
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              className={`p-4 text-sm font-bold uppercase tracking-widest border ${
-                                adhFeedback.type === 'success' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'
-                              }`}
-                            >
-                              {adhFeedback.msg}
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -854,13 +806,24 @@ export default function App() {
                         <AnimatePresence>
                           {adhFeedback.msg && (
                             <motion.div 
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              className={`p-4 text-sm font-bold uppercase tracking-widest border ${
-                                adhFeedback.type === 'success' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'
+                              initial={{ opacity: 0, scale: 0.95 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              className={`p-8 border-l-4 text-left space-y-4 ${
+                                adhFeedback.type === 'success' ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'
                               }`}
                             >
-                              {adhFeedback.msg}
+                              <p className={`micro-label flex items-center gap-2 ${adhFeedback.type === 'success' ? 'text-green-700' : 'text-red-700'}`}>
+                                <MessageCircle size={14} /> {t.common.feedback}
+                              </p>
+                              <p className="text-slate-600 italic font-light leading-relaxed">
+                                {adhFeedback.explanation}
+                              </p>
+                              <button 
+                                onClick={generateAdhQuestion}
+                                className="text-[10px] font-bold uppercase tracking-widest border-b border-editorial-ink pb-1"
+                              >
+                                {t.common.next}
+                              </button>
                             </motion.div>
                           )}
                         </AnimatePresence>
