@@ -10,6 +10,7 @@ export const translations = {
       cidadania: "Cidadania",
       glossario: "Glossário",
       quiz: "Super Quiz",
+      monumentos: "Monumentos",
       guia: "Ajuda"
     },
     common: {
@@ -42,6 +43,7 @@ export const translations = {
       cidadania: "Citizenship",
       glossario: "Glossary",
       quiz: "Super Quiz",
+      monumentos: "Monuments",
       guia: "Help"
     },
     common: {
@@ -74,6 +76,7 @@ export const translations = {
       cidadania: "Citoyenneté",
       glossario: "Glossaire",
       quiz: "Super Quiz",
+      monumentos: "Monuments",
       guia: "Aide"
     },
     common: {

@@ -326,15 +326,56 @@ export default function App() {
     }
   };
 
+  // --- Monument Challenge State ---
+  const [monScore, setMonScore] = useState(0);
+  const [monQuestion, setMonQuestion] = useState<{monument: string, correctCountry: any, options: any[]} | null>(null);
+  const [monFeedback, setMonFeedback] = useState<{ msg: string, type: 'success' | 'error' | null, explanation?: string }>({ msg: "", type: null });
+
+  const generateMonQuestion = () => {
+    const randomCountry = euCountries[Math.floor(Math.random() * euCountries.length)];
+    const monument = randomCountry.monuments[Math.floor(Math.random() * randomCountry.monuments.length)];
+    const others = euCountries.filter(c => c.id !== randomCountry.id)
+      .sort(() => 0.5 - Math.random())
+      .slice(0, 3);
+    const options = [randomCountry, ...others].sort(() => 0.5 - Math.random());
+    setMonQuestion({ monument, correctCountry: randomCountry, options });
+    setMonFeedback({ msg: "", type: null });
+  };
+
+  const handleMonAnswer = (selectedId: string) => {
+    if (!monQuestion) return;
+    const isCorrect = monQuestion.correctCountry.id === selectedId;
+    const country = monQuestion.correctCountry;
+    const explanation = `O monumento ${monQuestion.monument} localiza-se em ${country.name} (${country.flag}). A sua capital é ${country.capital}.`;
+
+    if (isCorrect) {
+      setMonScore(prev => prev + 1);
+      if (monScore + 1 >= 10) addBadge('geo_elite');
+      setMonFeedback({ 
+        msg: t.common.correct, 
+        type: 'success',
+        explanation 
+      });
+    } else {
+      setMonFeedback({ 
+        msg: t.common.incorrect, 
+        type: 'error',
+        explanation 
+      });
+    }
+  };
+
   // Inicializar perguntas
   useEffect(() => {
     if (!quizQuestion && activeTab === 'mapa') generateQuestion();
     if (!adhQuestion && activeTab === 'adesao') generateAdhQuestion();
+    if (!monQuestion && activeTab === 'monumentos') generateMonQuestion();
   }, [activeTab]);
 
   const tabs = [
     { id: 'inicio', label: t.nav.inicio, icon: Landmark },
     { id: 'mapa', label: t.nav.capitais, icon: MapIcon },
+    { id: 'monumentos', label: t.nav.monumentos, icon: ShieldCheck },
     { id: 'adesao', label: t.nav.adesao, icon: Calendar }, 
     { id: 'historia', label: t.nav.historia, icon: History },
     { id: 'instituicoes', label: t.nav.instituicoes, icon: Award },
@@ -459,6 +500,10 @@ export default function App() {
                     <div className="flex justify-between items-end border-b border-slate-100 pb-2">
                       <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Capitais</span>
                       <span className="heading-serif text-3xl text-eu-blue">{quizScore}</span>
+                    </div>
+                    <div className="flex justify-between items-end border-b border-slate-100 pb-2">
+                      <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Monumentos</span>
+                      <span className="heading-serif text-3xl text-eu-blue">{monScore}</span>
                     </div>
                     <div className="flex justify-between items-end border-b border-slate-100 pb-2">
                       <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Adesão</span>
@@ -606,8 +651,88 @@ export default function App() {
             </motion.div>
           )}
 
-          {/* --- Glossário --- */}
-            {activeTab === 'glossario' && (
+          {activeTab === 'monumentos' && (
+            <motion.div 
+               key="monumentos"
+               initial={{ opacity: 0 }}
+               animate={{ opacity: 1 }}
+               className="space-y-12"
+            >
+              <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-editorial-ink pb-12">
+                <div className="space-y-4">
+                  <p className="micro-label text-eu-blue opacity-100">{t.nav.monumentos}</p>
+                  <h2 className="heading-serif text-5xl lg:text-7xl">Desafio dos Monumentos</h2>
+                  <p className="text-slate-500 max-w-lg italic font-light">Identifique o país onde se localiza cada monumento icónico da Europa.</p>
+                </div>
+                <div className="flex items-center gap-4 bg-white px-6 py-3 border border-editorial-border shadow-editorial">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Pontos</span>
+                  <span className="heading-serif text-3xl text-eu-blue">{monScore}</span>
+                </div>
+              </header>
+
+              <div className="max-w-4xl mx-auto">
+                <AnimatePresence mode="wait">
+                  {monQuestion && (
+                    <motion.div 
+                      key={monQuestion.monument}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      className="bg-white p-12 border border-editorial-border shadow-editorial text-center space-y-10"
+                    >
+                      <div className="space-y-4">
+                        <div className="mx-auto w-24 h-24 bg-eu-blue/5 rounded-full flex items-center justify-center text-eu-blue mb-4">
+                           <Landmark size={48} />
+                        </div>
+                        <h3 className="heading-serif text-5xl italic">{monQuestion.monument}</h3>
+                        <p className="micro-label opacity-40 uppercase tracking-widest">Em que país se encontra este monumento?</p>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        {monQuestion.options.map((opt: any) => (
+                          <button
+                            key={opt.id}
+                            onClick={() => handleMonAnswer(opt.id)}
+                            className="p-6 border border-editorial-border hover:bg-eu-blue hover:text-white transition-all heading-serif text-2xl group flex items-center justify-center gap-4"
+                          >
+                            <span className="text-3xl">{opt.flag}</span>
+                            <span className="group-hover:italic">{opt.name}</span>
+                          </button>
+                        ))}
+                      </div>
+
+                      <AnimatePresence>
+                        {monFeedback.msg && (
+                          <motion.div 
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className={`p-8 border-l-4 text-left space-y-4 ${
+                              monFeedback.type === 'success' ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'
+                            }`}
+                          >
+                            <p className={`micro-label flex items-center gap-2 ${monFeedback.type === 'success' ? 'text-green-700' : 'text-red-700'}`}>
+                              <MessageCircle size={14} /> {t.common.feedback}
+                            </p>
+                            <p className="text-slate-600 italic font-light leading-relaxed">
+                              {monFeedback.explanation}
+                            </p>
+                            <button 
+                              onClick={generateMonQuestion}
+                              className="text-[10px] font-bold uppercase tracking-widest border-b border-editorial-ink pb-1"
+                            >
+                              {t.common.next}
+                            </button>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </motion.div>
+          )}
+
+          {activeTab === 'glossario' && (
             <motion.div 
               key="glossario"
               initial={{ opacity: 0 }}
@@ -1001,11 +1126,17 @@ export default function App() {
                     </p>
                   </div>
 
-                  <div className="asymmetric-card">
+                  <div className="asymmetric-card border-l-eu-gold">
                     <div className="flex items-center gap-4 mb-4">
-                      <Users className="text-eu-blue" />
-                      <h3 className="heading-serif text-2xl">Resolução</h3>
+                      <Landmark className="text-eu-blue" />
+                      <h3 className="heading-serif text-2xl">Desafio dos Monumentos</h3>
                     </div>
+                    <p className="text-sm text-slate-600 leading-relaxed">
+                      Adivinhe o país de origem de vários monumentos europeus famosos. Uma excelente forma de aprender sobre o património cultural da União.
+                    </p>
+                  </div>
+
+                  <div className="asymmetric-card">
                     <p className="text-sm text-slate-600 leading-relaxed">
                       Para uma experiência editorial completa e legível, recomendamos a visualização em ecrãs com largura superior a 1024px (desktop ou tablet em modo paisagem).
                     </p>
