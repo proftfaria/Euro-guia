@@ -14,11 +14,36 @@ import {
   Menu,
   X,
   Calendar,
-  CheckCircle2
+  CheckCircle2,
+  Globe,
+  Award,
+  BookMarked,
+  Trophy,
+  ChevronRight,
+  ShieldCheck,
+  Search,
+  MessageCircle,
+  BarChart3
 } from "lucide-react";
 import { euCountries, euTimeline, euInstitutions } from "./data/euData";
+import { translations, glossary, mainQuiz } from "./data/extraData";
 
 // --- Sub-components ---
+
+const LanguageSwitcher = ({ current, setLang }: { current: string, setLang: (l: 'pt' | 'en' | 'fr') => void }) => (
+  <div className="flex gap-2 mb-8 items-center bg-editorial-bg p-2 border border-editorial-border">
+    <Globe size={14} className="text-eu-blue ml-2" />
+    {(['pt', 'en', 'fr'] as const).map(l => (
+      <button 
+        key={l}
+        onClick={() => setLang(l)}
+        className={`text-[10px] uppercase font-bold px-3 py-1 transition-all ${current === l ? 'bg-eu-blue text-white' : 'text-slate-400 hover:text-eu-blue'}`}
+      >
+        {l}
+      </button>
+    ))}
+  </div>
+);
 
 interface InstitutionItemProps {
   inst: any;
@@ -73,19 +98,35 @@ const TimelineNode: React.FC<TimelineNodeProps> = ({ event, index }) => (
 // --- Main App Component ---
 
 export default function App() {
+  const [lang, setLang] = useState<'pt' | 'en' | 'fr'>('pt');
   const [activeTab, setActiveTab] = useState('inicio');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
-  // Estado para o jogo de correspondência
+  const t = translations[lang];
+
+  // --- Gamificação Logic ---
+  const [badges, setBadges] = useState<string[]>([]);
+  const [highScore, setHighScore] = useState(0);
+
+  useEffect(() => {
+    const savedBadges = localStorage.getItem('eu-badges');
+    const savedScore = localStorage.getItem('eu-highscore');
+    if (savedBadges) setBadges(JSON.parse(savedBadges));
+    if (savedScore) setHighScore(parseInt(savedScore));
+  }, []);
+
+  const addBadge = (id: string) => {
+    if (!badges.includes(id)) {
+      const newBadges = [...badges, id];
+      setBadges(newBadges);
+      localStorage.setItem('eu-badges', JSON.stringify(newBadges));
+    }
+  };
+
+  // --- Capitais Quiz State ---
   const [quizScore, setQuizScore] = useState(0);
   const [quizQuestion, setQuizQuestion] = useState<{country: any, options: any[]} | null>(null);
   const [feedback, setFeedback] = useState<{ msg: string, type: 'success' | 'error' | null }>({ msg: "", type: null });
-
-  // Estado para o jogo de adesão
-  const [adhScore, setAdhScore] = useState(0);
-  const [adhQuestion, setAdhQuestion] = useState<{year: number, options: any[], targets: string[]} | null>(null);
-  const [adhSelectedIds, setAdhSelectedIds] = useState<string[]>([]);
-  const [adhFeedback, setAdhFeedback] = useState<{ msg: string, type: 'success' | 'error' | null }>({ msg: "", type: null });
 
   const generateQuestion = () => {
     const randomCountry = euCountries[Math.floor(Math.random() * euCountries.length)];
@@ -97,33 +138,42 @@ export default function App() {
     setFeedback({ msg: "", type: null });
   };
 
+  // --- Super Quiz State ---
+  const [superQuizIndex, setSuperQuizIndex] = useState(0);
+  const [superQuizScore, setSuperQuizScore] = useState(0);
+  const [superQuizFeedback, setSuperQuizFeedback] = useState<string | null>(null);
+
+  const handleSuperQuizAnswer = (optionId: string) => {
+    const currentQ = mainQuiz[superQuizIndex];
+    if (optionId === currentQ.correct) {
+      setSuperQuizScore(prev => prev + 1);
+      setSuperQuizFeedback(currentQ.explanation[lang]);
+      if (superQuizScore + 1 >= 5) addBadge('euro_expert');
+    } else {
+      setSuperQuizFeedback(`Incorreto. ${currentQ.explanation[lang]}`);
+    }
+  };
+
+  // --- Adesão Quiz State ---
+  const [adhScore, setAdhScore] = useState(0);
+  const [adhQuestion, setAdhQuestion] = useState<{year: number, options: any[], targets: string[]} | null>(null);
+  const [adhSelectedIds, setAdhSelectedIds] = useState<string[]>([]);
+  const [adhFeedback, setAdhFeedback] = useState<{ msg: string, type: 'success' | 'error' | null }>({ msg: "", type: null });
+
   const generateAdhQuestion = () => {
     const uniqueYears = Array.from(new Set(euCountries.map(c => c.joined))).sort((a, b) => a - b);
     const randomYear = uniqueYears[Math.floor(Math.random() * uniqueYears.length)];
     const correctCountries = euCountries.filter(c => c.joined === randomYear);
-    const targetIds = correctCountries.map(c => c.id);
+    const options = euCountries.filter(c => c.joined !== randomYear).sort(() => 0.5 - Math.random()).slice(0, 3);
+    const finalOptions = [...correctCountries.slice(0, 3), ...options].sort(() => 0.5 - Math.random());
     
-    // Pegar alguns de outros anos como distratores
-    const distractors = euCountries.filter(c => c.joined !== randomYear)
-      .sort(() => 0.5 - Math.random())
-      .slice(0, 6 - Math.min(targetIds.length, 3));
-    
-    const options = [...correctCountries.slice(0, 3), ...distractors].sort(() => 0.5 - Math.random());
-    const finalTargetIds = options.filter(o => o.joined === randomYear).map(o => o.id);
-
-    setAdhQuestion({ year: randomYear, options, targets: finalTargetIds });
+    setAdhQuestion({ 
+      year: randomYear, 
+      options: finalOptions, 
+      targets: finalOptions.filter(o => o.joined === randomYear).map(o => o.id) 
+    });
     setAdhSelectedIds([]);
     setAdhFeedback({ msg: "", type: null });
-  };
-
-  const handleAnswer = (selectedId: string) => {
-    if (quizQuestion?.country.id === selectedId) {
-      setQuizScore(prev => prev + 1);
-      setFeedback({ msg: "Correto! A capital de " + quizQuestion.country.name + " é " + quizQuestion.country.capital + ".", type: 'success' });
-      setTimeout(generateQuestion, 2000);
-    } else {
-      setFeedback({ msg: "Incorreto. Tenta outra vez!", type: 'error' });
-    }
   };
 
   const handleAdhToggle = (id: string) => {
@@ -139,10 +189,22 @@ export default function App() {
     
     if (isCorrect) {
       setAdhScore(prev => prev + 1);
-      setAdhFeedback({ msg: "Excelente! Selecionou todos os países corretamente.", type: 'success' });
+      if (adhScore + 1 >= 5) addBadge('geo_elite');
+      setAdhFeedback({ msg: t.common.correct, type: 'success' });
       setTimeout(generateAdhQuestion, 2000);
     } else {
-      setAdhFeedback({ msg: "Ainda não está correto. Verifique a sua seleção.", type: 'error' });
+      setAdhFeedback({ msg: t.common.incorrect, type: 'error' });
+    }
+  };
+
+  const handleAnswer = (selectedId: string) => {
+    if (quizQuestion?.country.id === selectedId) {
+      setQuizScore(prev => prev + 1);
+      if (quizScore + 1 >= 10) addBadge('geo_elite');
+      setFeedback({ msg: t.common.correct, type: 'success' });
+      setTimeout(generateQuestion, 2000);
+    } else {
+      setFeedback({ msg: t.common.incorrect, type: 'error' });
     }
   };
 
@@ -153,25 +215,29 @@ export default function App() {
   }, [activeTab]);
 
   const tabs = [
-    { id: 'inicio', label: 'Início', icon: Landmark },
-    { id: 'mapa', label: 'Desafio Capitais', icon: MapIcon },
-    { id: 'adesao', label: 'Desafio Adesão', icon: Calendar }, 
-    { id: 'historia', label: 'Cronologia', icon: History },
-    { id: 'instituicoes', label: 'Instituições', icon: Landmark },
-    { id: 'cidadania', label: 'Cidadania', icon: Users },
-    { id: 'guia', label: 'Guia do Utilizador', icon: BookOpen },
+    { id: 'inicio', label: t.nav.inicio, icon: Landmark },
+    { id: 'mapa', label: t.nav.capitais, icon: MapIcon },
+    { id: 'adesao', label: t.nav.adesao, icon: Calendar }, 
+    { id: 'historia', label: t.nav.historia, icon: History },
+    { id: 'instituicoes', label: t.nav.instituicoes, icon: Award },
+    { id: 'cidadania', label: t.nav.cidadania, icon: Users },
+    { id: 'glossario', label: t.nav.glossario, icon: BookMarked },
+    { id: 'quiz', label: t.nav.quiz, icon: Trophy },
+    { id: 'guia', label: t.nav.guia, icon: BookOpen },
   ];
 
   return (
     <div className="flex min-h-screen bg-editorial-bg text-editorial-ink font-sans">
       {/* Sidebar - Desktop */}
       <aside className="hidden lg:flex w-80 border-r border-editorial-border flex-col p-8 sticky top-0 h-screen overflow-y-auto bg-editorial-bg">
-        <div className="flex flex-col mb-12">
+        <div className="flex flex-col mb-8">
           <p className="micro-label mb-2">Edição 2026 • Guia de Estudo</p>
           <h1 className="heading-serif text-5xl">EuroGuia</h1>
           <p className="text-[9px] uppercase tracking-[0.3em] font-bold mt-2 opacity-40">Compêndio Interativo da União Europeia</p>
           <div className="h-px bg-editorial-ink mt-4 w-full" />
         </div>
+
+        <LanguageSwitcher current={lang} setLang={setLang} />
 
         <nav className="flex-1 space-y-1 mb-8">
           {tabs.map(tab => (
@@ -188,10 +254,25 @@ export default function App() {
                 <tab.icon size={16} className={activeTab === tab.id ? 'text-eu-gold' : ''} />
                 <span className="text-xs uppercase tracking-widest font-bold">{tab.label}</span>
               </div>
-              <span className={`text-[10px] italic font-display ${activeTab === tab.id ? 'opacity-100' : 'opacity-0'} group-hover:opacity-100`}>ver</span>
+              <ChevronRight size={12} className={`transition-all ${activeTab === tab.id ? 'translate-x-0' : '-translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0'}`} />
             </button>
           ))}
         </nav>
+
+        {badges.length > 0 && (
+          <div className="mb-8 p-6 bg-white border border-editorial-border shadow-editorial">
+            <h4 className="micro-label text-eu-blue mb-4 flex items-center gap-2">
+              <Trophy size={14} /> {t.common.achievements}
+            </h4>
+            <div className="flex flex-wrap gap-2">
+              {badges.map(b => (
+                <div key={b} className="p-2 bg-eu-gold/10 text-eu-blue rounded-sm border border-eu-gold/20" title={(t.badges as any)[b]}>
+                  <ShieldCheck size={16} />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="mt-8">
           <div className="p-6 border border-editorial-border bg-white shadow-editorial">
@@ -232,11 +313,16 @@ export default function App() {
               className="space-y-20 pt-8"
             >
               <header className="space-y-6 border-b border-editorial-ink pb-12">
-                <p className="micro-label text-eu-blue opacity-100">Manchete Europa • 2026</p>
-                <h2 className="heading-serif text-7xl lg:text-9xl tracking-tighter">A Nossa União: <br/><span className="text-eu-blue italic lg:text-8xl">O Futuro Compartilhado</span></h2>
+                <p className="micro-label text-eu-blue opacity-100 flex items-center gap-2">
+                  <Globe size={14} /> {t.nav.inicio} • 2026
+                </p>
+                <h2 className="heading-serif text-6xl lg:text-8xl tracking-tighter">
+                  Bem-vindo ao <br/>
+                  <span className="text-eu-blue italic">{t.nav.inicio} EuroGuia</span>
+                </h2>
                 <div className="grid md:grid-cols-2 gap-12 items-end">
-                   <p className="text-lg text-slate-600 font-light leading-relaxed">
-                    Explore as narrativas profundas, as fronteiras fluídas e as arquiteturas políticas que sustentam o projeto de paz mais ambicioso da história moderna.
+                  <p className="text-lg text-slate-600 font-light leading-relaxed italic">
+                    Explore as narrativas, a geografia e as instituições que unem este continente num futuro partilhado.
                   </p>
                   <div className="flex justify-end gap-1 px-4">
                      {[...Array(3)].map((_, i) => (
@@ -246,52 +332,80 @@ export default function App() {
                 </div>
               </header>
 
-              <div className="grid md:grid-cols-12 gap-8 items-start">
-                <div className="col-span-8 asymmetric-card bg-white p-10 hover:translate-y-[-4px] transition-transform">
-                  <p className="micro-label mb-4 opacity-100 text-eu-blue">Atividade Interativa</p>
-                  <h3 className="heading-serif text-4xl mb-6">Desafio das Capitais</h3>
-                  <p className="text-slate-600 mb-8 leading-relaxed">
-                    Teste os seus conhecimentos sobre a geografia política da União Europeia. Consegue identificar todas as capitais dos 27 Estados-membros?
-                  </p>
-                  <button onClick={() => setActiveTab('mapa')} className="text-xs uppercase tracking-[0.2em] font-bold border-b border-eu-blue pb-1 hover:text-eu-blue transition-colors">
-                    Iniciar Desafio
+              <div className="grid md:grid-cols-2 gap-8">
+                <div className="bg-white border border-editorial-border p-10 shadow-editorial group hover:translate-y-[-4px] transition-transform">
+                  <h4 className="micro-label text-eu-blue mb-6 flex items-center gap-2 uppercase tracking-widest font-bold">
+                    <Trophy size={16} className="text-eu-gold" /> {t.common.score}
+                  </h4>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-end border-b border-slate-100 pb-2">
+                      <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Capitais</span>
+                      <span className="heading-serif text-3xl text-eu-blue">{quizScore}</span>
+                    </div>
+                    <div className="flex justify-between items-end border-b border-slate-100 pb-2">
+                      <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Adesão</span>
+                      <span className="heading-serif text-3xl text-eu-blue">{adhScore}</span>
+                    </div>
+                    <div className="flex justify-between items-end border-b border-slate-100 pb-2">
+                      <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Super Quiz</span>
+                      <span className="heading-serif text-3xl text-eu-blue">{superQuizScore} / {mainQuiz.length}</span>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => setActiveTab('quiz')}
+                    className="mt-10 w-full text-[10px] font-bold uppercase tracking-[0.2em] bg-editorial-ink text-white py-4 hover:bg-eu-blue transition-colors shadow-lg"
+                  >
+                    Iniciar Super Quiz
                   </button>
                 </div>
-                
-                <div className="col-span-4 space-y-6">
-                  <div className="bg-eu-blue text-white p-8 asymmetric-card">
-                    <h4 className="heading-serif text-2xl mb-4">Desafio de Adesão</h4>
-                    <p className="text-xs opacity-80 leading-relaxed mb-6">
-                      Sabe quais os países que entraram em simultâneo com Portugal? Teste a sua memória histórica.
-                    </p>
-                    <button onClick={() => setActiveTab('adesao')} className="text-[10px] uppercase tracking-widest font-bold bg-white text-eu-blue px-6 py-3 hover:bg-eu-gold hover:text-slate-900 transition-colors">
-                      Testar Agora
-                    </button>
+
+                <div className="bg-editorial-ink text-white p-10 shadow-editorial relative overflow-hidden group hover:translate-y-[-4px] transition-transform">
+                  <div className="absolute top-0 right-0 p-4 opacity-10">
+                    <Trophy size={120} />
                   </div>
-                  <div className="border border-editorial-border p-8 flex flex-col items-center text-center bg-white/40">
-                    <History className="w-10 h-10 text-eu-gold mb-6" />
-                    <h3 className="heading-serif text-2xl mb-4">Arquivo Histórico</h3>
-                    <p className="text-[11px] uppercase tracking-wider text-slate-500 font-bold leading-relaxed mb-6">
-                      A jornada desde o carvão e o aço até à cidadania digital.
-                    </p>
-                    <button onClick={() => setActiveTab('historia')} className="text-[10px] uppercase font-bold text-eu-blue border border-eu-blue/20 px-6 py-2 hover:bg-eu-blue hover:text-white transition-colors">
-                      Ver Registros
-                    </button>
-                  </div>
+                  <h4 className="micro-label text-eu-gold mb-6 flex items-center gap-2 border-b border-white/10 pb-4">
+                    <Award size={16} /> {t.common.achievements}
+                  </h4>
+                  {badges.length > 0 ? (
+                    <div className="grid grid-cols-4 gap-4 relative z-10">
+                      {badges.map(b => (
+                        <div key={b} className="aspect-square bg-white/10 rounded-sm flex items-center justify-center text-eu-gold border border-white/20 hover:bg-eu-gold hover:text-editorial-ink transition-all cursor-help" title={(t.badges as any)[b]}>
+                           <ShieldCheck size={28} />
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="space-y-6 relative z-10">
+                      <p className="text-slate-400 italic text-sm font-light">Ainda não conquistou medalhas de mérito.</p>
+                      <button 
+                        onClick={() => setActiveTab('mapa')}
+                        className="text-[10px] font-bold uppercase tracking-widest text-eu-gold border-b border-eu-gold/30 pb-1 hover:border-eu-gold transition-all"
+                      >
+                        Praticar agora
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
 
-              <div className="bg-editorial-ink text-white p-16 relative overflow-hidden flex flex-col md:flex-row gap-12 items-center">
-                <div className="relative z-10 flex-1 space-y-8 text-center md:text-left">
-                  <h3 className="heading-serif text-5xl text-white">A Cartilha do Cidadão</h3>
-                  <p className="text-slate-400 font-light max-w-lg leading-relaxed">
-                    Sua identidade como cidadão europeu confere prerrogativas inalienáveis. Descubra como exercer seus direitos e deveres fundamentais num espaço sem fronteiras interiores.
-                  </p>
-                  <button onClick={() => setActiveTab('cidadania')} className="border border-white/30 px-10 py-4 text-xs font-bold uppercase tracking-[0.3em] hover:bg-white hover:text-editorial-ink transition-all">
-                    Aceder à Cartilha
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {[
+                  { id: 'historia', icon: History, label: t.nav.historia },
+                  { id: 'instituicoes', icon: Award, label: t.nav.instituicoes },
+                  { id: 'cidadania', icon: Users, label: t.nav.cidadania }
+                ].map(item => (
+                  <button
+                    key={item.id}
+                    onClick={() => setActiveTab(item.id)}
+                    className="bg-white border border-editorial-border p-8 text-center space-y-4 hover:border-eu-blue transition-all group shadow-editorial"
+                  >
+                    <div className="mx-auto w-12 h-12 bg-slate-50 flex items-center justify-center rounded-full group-hover:bg-eu-blue group-hover:text-white transition-colors">
+                      <item.icon size={20} />
+                    </div>
+                    <h5 className="heading-serif text-xl">{item.label}</h5>
+                    <p className="text-[9px] text-slate-400 uppercase tracking-widest border-t border-slate-50 pt-4">Consultar Guia</p>
                   </button>
-                </div>
-                <div className="hidden md:block w-32 h-32 border-4 border-eu-gold rounded-full flex-shrink-0 animate-pulse" />
+                ))}
               </div>
             </motion.div>
           )}
@@ -305,12 +419,12 @@ export default function App() {
             >
               <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-editorial-ink pb-12">
                 <div className="space-y-4">
-                  <p className="micro-label text-eu-blue opacity-100">Jogo Educativo • Geografia Política</p>
+                  <p className="micro-label text-eu-blue opacity-100">{t.nav.capitais}</p>
                   <h2 className="heading-serif text-5xl lg:text-7xl">Correspondência de Capitais</h2>
                   <p className="text-slate-500 max-w-lg italic font-light">Ligue cada país à sua capital correspondente para acumular pontos.</p>
                 </div>
                 <div className="flex items-center gap-4 bg-white px-6 py-3 border border-editorial-border shadow-editorial">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Pontuação Atual</span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{t.common.score}</span>
                   <span className="heading-serif text-3xl text-eu-blue">{quizScore}</span>
                 </div>
               </header>
@@ -359,6 +473,191 @@ export default function App() {
                     </motion.div>
                   )}
                 </AnimatePresence>
+              </div>
+            </motion.div>
+          )}
+
+          {/* --- Adesão --- */}
+          {activeTab === 'adesao' && (
+            <motion.div 
+              key="adesao"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="space-y-12"
+            >
+              <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-editorial-ink pb-12">
+                <div className="space-y-4">
+                  <p className="micro-label text-eu-blue opacity-100">{t.nav.adesao}</p>
+                  <h2 className="heading-serif text-5xl lg:text-7xl">Ciclos de Adesão</h2>
+                </div>
+                <div className="flex items-center gap-4 bg-white px-6 py-3 border border-editorial-border shadow-editorial">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{t.common.score}</span>
+                  <span className="heading-serif text-3xl text-eu-blue">{adhScore}</span>
+                </div>
+              </header>
+
+              <div className="max-w-4xl mx-auto">
+                <AnimatePresence mode="wait">
+                  {adhQuestion && (
+                    <motion.div 
+                      key={adhQuestion.year}
+                      initial={{ opacity: 0, scale: 0.98 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="bg-white p-12 border border-editorial-border shadow-editorial text-center space-y-10"
+                    >
+                      <div className="space-y-4">
+                        <p className="micro-label opacity-40">Selecione os países que aderiram em:</p>
+                        <h3 className="heading-serif text-8xl text-eu-blue">{adhQuestion.year}</h3>
+                      </div>
+
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                        {adhQuestion.options.map((country: any) => (
+                          <button
+                            key={country.id}
+                            onClick={() => handleAdhToggle(country.id)}
+                            className={`p-6 border transition-all flex flex-col items-center gap-4 group ${
+                              adhSelectedIds.includes(country.id) 
+                              ? 'bg-eu-blue border-eu-blue text-white shadow-lg translate-y-[-4px]' 
+                              : 'bg-slate-50 border-editorial-border hover:border-eu-blue/40'
+                            }`}
+                          >
+                            <span className="text-4xl">{country.flag}</span>
+                            <span className="heading-serif text-xl">{country.name}</span>
+                            {adhSelectedIds.includes(country.id) && (
+                              <CheckCircle2 size={16} className="text-eu-gold animate-in zoom-in" />
+                            )}
+                          </button>
+                        ))}
+                      </div>
+
+                      <div className="pt-6 space-y-6">
+                        <button
+                          onClick={checkAdhAnswer}
+                          disabled={adhSelectedIds.length === 0}
+                          className="w-full md:w-auto px-12 py-4 bg-editorial-ink text-white heading-serif text-xl uppercase tracking-widest hover:bg-eu-blue disabled:opacity-20 transition-all"
+                        >
+                          Verificar Resposta
+                        </button>
+
+                        <AnimatePresence>
+                          {adhFeedback.msg && (
+                            <motion.div 
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              className={`p-4 text-sm font-bold uppercase tracking-widest border ${
+                                adhFeedback.type === 'success' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'
+                              }`}
+                            >
+                              {adhFeedback.msg}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </motion.div>
+          )}
+
+          {/* --- Glossário --- */}
+            {activeTab === 'glossario' && (
+            <motion.div 
+              key="glossario"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="space-y-12"
+            >
+              <header className="border-b border-editorial-ink pb-12">
+                <p className="micro-label text-eu-blue opacity-100">{t.nav.glossario}</p>
+                <h2 className="heading-serif text-6xl">Léxico Europeu</h2>
+                <div className="mt-8 flex items-center bg-white border border-editorial-border p-4 max-w-md">
+                   <Search size={16} className="text-slate-300 mr-4" />
+                   <input type="text" placeholder="Pesquisar termo..." className="text-sm w-full outline-none italic font-light" />
+                </div>
+              </header>
+
+              <div className="grid md:grid-cols-2 gap-8">
+                {glossary.map((item) => (
+                  <div key={item.id} className="asymmetric-card bg-white p-8 group hover:border-eu-blue transition-colors">
+                    <h3 className="heading-serif text-3xl mb-4 text-eu-blue">{(item.term as any)[lang]}</h3>
+                    <p className="text-sm text-slate-600 leading-relaxed font-light italic">
+                      {(item.def as any)[lang]}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
+          {/* --- Super Quiz --- */}
+          {activeTab === 'quiz' && (
+            <motion.div 
+              key="quiz"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="space-y-12"
+            >
+              <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-editorial-ink pb-12">
+                <div className="space-y-4">
+                  <p className="micro-label text-eu-blue opacity-100">{t.nav.quiz}</p>
+                  <h2 className="heading-serif text-6xl">O Grande Teste</h2>
+                </div>
+                <div className="flex items-center gap-4 bg-white px-6 py-3 border border-editorial-border shadow-editorial">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{t.common.score}</span>
+                  <span className="heading-serif text-3xl text-eu-blue">{superQuizScore} / {mainQuiz.length}</span>
+                </div>
+              </header>
+
+              <div className="max-w-3xl mx-auto">
+                 <div className="bg-white p-12 border border-editorial-border shadow-editorial space-y-10">
+                    <div className="space-y-4">
+                      <p className="micro-label opacity-40">Questão {superQuizIndex + 1}</p>
+                      <h3 className="heading-serif text-4xl">{mainQuiz[superQuizIndex].question[lang]}</h3>
+                    </div>
+
+                    <div className="space-y-4">
+                      {mainQuiz[superQuizIndex].options.map((opt) => (
+                        <button
+                          key={opt.id}
+                          onClick={() => handleSuperQuizAnswer(opt.id)}
+                          disabled={!!superQuizFeedback}
+                          className={`w-full p-6 border text-left flex justify-between items-center transition-all group ${
+                            superQuizFeedback ? (opt.id === mainQuiz[superQuizIndex].correct ? 'border-green-500 bg-green-50' : 'opacity-20') : 'hover:border-eu-blue hover:bg-slate-50'
+                          }`}
+                        >
+                          <span className="heading-serif text-xl">{opt.text[lang]}</span>
+                          <ChevronRight size={16} className="text-eu-blue opacity-0 group-hover:opacity-100" />
+                        </button>
+                      ))}
+                    </div>
+
+                    {superQuizFeedback && (
+                      <motion.div 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="p-8 bg-eu-blue/5 border-l-4 border-eu-blue"
+                      >
+                        <p className="micro-label text-eu-blue mb-2 flex items-center gap-2 italic">
+                          <MessageCircle size={14} /> {t.common.feedback}
+                        </p>
+                        <p className="text-slate-600 italic font-light">{superQuizFeedback}</p>
+                        <button 
+                          onClick={() => {
+                            setSuperQuizFeedback(null);
+                            if (superQuizIndex < mainQuiz.length - 1) {
+                              setSuperQuizIndex(prev => prev + 1);
+                            } else {
+                              setActiveTab('inicio');
+                            }
+                          }}
+                          className="mt-8 text-[10px] font-bold uppercase tracking-widest border-b border-editorial-ink"
+                        >
+                          {superQuizIndex < mainQuiz.length - 1 ? t.common.next : t.common.finish}
+                        </button>
+                      </motion.div>
+                    )}
+                 </div>
               </div>
             </motion.div>
           )}
