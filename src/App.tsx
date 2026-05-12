@@ -74,15 +74,42 @@ const TimelineNode: React.FC<TimelineNodeProps> = ({ event, index }) => (
 export default function App() {
   const [activeTab, setActiveTab] = useState('inicio');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [selectedCountry, setSelectedCountry] = useState<any>(null);
+  
+  // Estado para o jogo de correspondência
+  const [quizScore, setQuizScore] = useState(0);
+  const [quizQuestion, setQuizQuestion] = useState<{country: any, options: any[]} | null>(null);
+  const [feedback, setFeedback] = useState<{ msg: string, type: 'success' | 'error' | null }>({ msg: "", type: null });
+
+  const generateQuestion = () => {
+    const randomCountry = euCountries[Math.floor(Math.random() * euCountries.length)];
+    const others = euCountries.filter(c => c.id !== randomCountry.id)
+      .sort(() => 0.5 - Math.random())
+      .slice(0, 3);
+    const options = [randomCountry, ...others].sort(() => 0.5 - Math.random());
+    setQuizQuestion({ country: randomCountry, options });
+    setFeedback({ msg: "", type: null });
+  };
+
+  const handleAnswer = (selectedId: string) => {
+    if (quizQuestion?.country.id === selectedId) {
+      setQuizScore(prev => prev + 1);
+      setFeedback({ msg: "Correto! A capital de " + quizQuestion.country.name + " é " + quizQuestion.country.capital + ".", type: 'success' });
+      setTimeout(generateQuestion, 2000);
+    } else {
+      setFeedback({ msg: "Incorreto. Tenta outra vez!", type: 'error' });
+    }
+  };
+
+  // Inicializar primeira pergunta
+  if (!quizQuestion && activeTab === 'mapa') generateQuestion();
 
   const tabs = [
     { id: 'inicio', label: 'Início', icon: Landmark },
-    { id: 'mapa', label: 'Mapa Interativo', icon: MapIcon },
+    { id: 'mapa', label: 'Desafio Capitais', icon: MapIcon },
     { id: 'historia', label: 'Cronologia', icon: History },
     { id: 'instituicoes', label: 'Instituições', icon: Landmark },
     { id: 'cidadania', label: 'Cidadania', icon: Users },
-    { id: 'guia', label: 'Guia do Utilizador', icon: BookOpen },
+    { id: 'guia', label: 'Guia & GitHub', icon: BookOpen },
   ];
 
   return (
@@ -119,7 +146,7 @@ export default function App() {
         <div className="mt-8">
           <div className="p-6 border border-editorial-border bg-white shadow-editorial">
             <h4 className="micro-label text-eu-blue mb-2">Suporte e Ajuda</h4>
-            <p className="text-[10px] leading-relaxed opacity-60">Consulte o guia para aprender a navegar nesta edição digital.</p>
+            <p className="text-[10px] leading-relaxed opacity-60">Consulte o guia para aprender a navegar e atualizar no GitHub.</p>
             <button 
               onClick={() => setActiveTab('guia')}
               className="mt-4 text-[10px] uppercase font-bold text-eu-blue border-b border-eu-blue/20"
@@ -171,13 +198,13 @@ export default function App() {
 
               <div className="grid md:grid-cols-12 gap-8 items-start">
                 <div className="col-span-8 asymmetric-card bg-white p-10 hover:translate-y-[-4px] transition-transform">
-                  <p className="micro-label mb-4 opacity-100 text-eu-blue">Seção Geografia</p>
-                  <h3 className="heading-serif text-4xl mb-6">Mapeando a Soberania</h3>
+                  <p className="micro-label mb-4 opacity-100 text-eu-blue">Atividade Interativa</p>
+                  <h3 className="heading-serif text-4xl mb-6">Desafio das Capitais</h3>
                   <p className="text-slate-600 mb-8 leading-relaxed">
-                    Dos fiordes da Escandinávia às ilhas do Egeu, descubra a identidade visual e os monumentos que definem a estética de cada Estado-membro.
+                    Teste os seus conhecimentos sobre a geografia política da União Europeia. Consegue identificar todas as capitais dos 27 Estados-membros?
                   </p>
                   <button onClick={() => setActiveTab('mapa')} className="text-xs uppercase tracking-[0.2em] font-bold border-b border-eu-blue pb-1 hover:text-eu-blue transition-colors">
-                    Abrir Atlas Interativo
+                    Iniciar Desafio
                   </button>
                 </div>
                 
@@ -217,90 +244,58 @@ export default function App() {
             >
               <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-editorial-ink pb-12">
                 <div className="space-y-4">
-                  <p className="micro-label text-eu-blue opacity-100">Mapa de Coesão • Visualização</p>
-                  <h2 className="heading-serif text-5xl lg:text-7xl">Geometria e Fronteiras</h2>
-                  <p className="text-slate-500 max-w-lg italic font-light">Uma exploração cartográfica dos 27 Estados-membros, suas capitais e símbolos nacionais.</p>
+                  <p className="micro-label text-eu-blue opacity-100">Jogo Educativo • Geografia Política</p>
+                  <h2 className="heading-serif text-5xl lg:text-7xl">Correspondência de Capitais</h2>
+                  <p className="text-slate-500 max-w-lg italic font-light">Ligue cada país à sua capital correspondente para acumular pontos.</p>
                 </div>
-                <div className="flex items-center gap-4 bg-white px-6 py-3 border border-editorial-border">
-                  <div className="w-4 h-4 bg-eu-blue border border-white" />
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Países da União</span>
+                <div className="flex items-center gap-4 bg-white px-6 py-3 border border-editorial-border shadow-editorial">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Pontuação Atual</span>
+                  <span className="heading-serif text-3xl text-eu-blue">{quizScore}</span>
                 </div>
               </header>
 
-              <div className="grid lg:grid-cols-12 gap-12">
-                <div className="lg:col-span-8 bg-white p-8 shadow-editorial border border-editorial-border relative overflow-hidden">
-                  <div className="absolute top-0 left-0 p-4 z-10">
-                    <span className="bg-eu-blue text-white text-[9px] px-3 py-1 uppercase tracking-tighter">Visualizador de Atlas</span>
-                  </div>
-                  <div className="opacity-10 absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--color-eu-blue)_1px,_transparent_1px)] bg-[size:24px_24px]" />
-                  <svg viewBox="0 0 800 600" className="w-full h-auto relative z-10 drop-shadow-xl">
-                    {euCountries.map(country => (
-                      <motion.path
-                        key={country.id}
-                        d={country.path}
-                        fill={selectedCountry?.id === country.id ? "#FFCC00" : "#003399"}
-                        stroke="#F9F8F6"
-                        strokeWidth="1"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        whileHover={{ fill: "#001a4d", scale: 1.01 }}
-                        className="cursor-pointer transition-all duration-300"
-                        onClick={() => setSelectedCountry(country)}
-                      />
-                    ))}
-                  </svg>
-                </div>
-
+              <div className="max-w-4xl mx-auto">
                 <AnimatePresence mode="wait">
-                  {selectedCountry ? (
+                  {quizQuestion && (
                     <motion.div 
-                      key={selectedCountry.id}
-                      initial={{ opacity: 0, x: 30 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: 30 }}
-                      className="lg:col-span-4 sticky top-12 h-fit"
+                      key={quizQuestion.country.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      className="bg-white p-12 border border-editorial-border shadow-editorial text-center space-y-10"
                     >
-                      <div className="asymmetric-card space-y-8">
-                        <div className="flex items-end justify-between border-b border-editorial-border pb-6">
-                           <span className="text-7xl grayscale hover:grayscale-0 transition-all cursor-default">{selectedCountry.flag}</span>
-                           <div className="text-right">
-                              <p className="micro-label mb-1">Adesão</p>
-                              <p className="heading-serif text-4xl text-eu-blue">{selectedCountry.joined}</p>
-                           </div>
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <h3 className="heading-serif text-5xl">{selectedCountry.name}</h3>
-                          <p className="micro-label opacity-40">Capital: <span className="text-editorial-ink opacity-100">{selectedCountry.capital}</span></p>
-                        </div>
-                        
-                        <div className="space-y-4">
-                          <h4 className="micro-label border-l-2 border-eu-gold pl-3">Arquitetura e Património</h4>
-                          <div className="space-y-2">
-                            {selectedCountry.monuments.map((m: string, i: number) => (
-                              <div key={i} className="flex items-start gap-4 text-xs italic text-slate-600 bg-editorial-bg p-4 border border-editorial-border/50">
-                                <Landmark size={14} className="text-eu-blue mt-0.5 flex-shrink-0" />
-                                <span>{m}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
+                      <div className="space-y-4">
+                        <span className="text-8xl mb-4 block">{quizQuestion.country.flag}</span>
+                        <h3 className="heading-serif text-5xl">{quizQuestion.country.name}</h3>
+                        <p className="micro-label opacity-40">Qual é a capital deste Estado-membro?</p>
+                      </div>
 
-                        <button 
-                          onClick={() => setSelectedCountry(null)}
-                          className="w-full py-4 text-[9px] uppercase tracking-[0.4em] font-bold text-slate-400 hover:text-editorial-ink hover:bg-slate-50 transition-all border border-transparent hover:border-editorial-border"
-                        >
-                          Fechar Registro
-                        </button>
+                      <div className="grid grid-cols-2 gap-4">
+                        {quizQuestion.options.map((opt: any) => (
+                          <button
+                            key={opt.id}
+                            onClick={() => handleAnswer(opt.id)}
+                            className="p-6 border border-editorial-border hover:bg-eu-blue hover:text-white transition-all heading-serif text-2xl group"
+                          >
+                            <span className="group-hover:italic">{opt.capital}</span>
+                          </button>
+                        ))}
                       </div>
+
+                      <AnimatePresence>
+                        {feedback.msg && (
+                          <motion.div 
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            className={`p-4 text-sm font-bold uppercase tracking-widest border ${
+                              feedback.type === 'success' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'
+                            }`}
+                          >
+                            {feedback.msg}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </motion.div>
-                  ) : (
-                    <div className="lg:col-span-4 bg-white/60 border border-editorial-border border-dashed p-10 flex flex-col items-center justify-center text-center space-y-6">
-                      <div className="bg-editorial-bg p-6 rounded-full border border-editorial-border shadow-inner">
-                        <MapIcon size={32} className="text-slate-300" />
-                      </div>
-                      <p className="text-sm italic text-slate-400 leading-relaxed font-light">Selecione uma região soberana para acessar o compêndio de informações nacionais.</p>
-                    </div>
                   )}
                 </AnimatePresence>
               </div>
@@ -433,61 +428,61 @@ export default function App() {
             >
               <header className="text-center max-w-3xl mx-auto space-y-4 border-b border-editorial-ink pb-12">
                 <p className="micro-label text-eu-blue opacity-100">Manual • Ajuda ao Utilizador</p>
-                <h2 className="heading-serif text-6xl">Instruções de Navegação</h2>
+                <h2 className="heading-serif text-6xl">Instruções e Atualização</h2>
                 <p className="text-slate-500 text-lg font-light leading-relaxed">
-                  Aprenda a interagir com este manual informativo e a explorar todo o conteúdo disponível.
+                  Saiba como navegar nesta aplicação e como sincronizar as suas alterações com o GitHub.
                 </p>
               </header>
 
               <div className="grid md:grid-cols-2 gap-12">
                 <div className="space-y-8">
-                  <div className="asymmetric-card">
+                  <div className="asymmetric-card border-l-eu-gold">
                     <div className="flex items-center gap-4 mb-4">
                       <MapIcon className="text-eu-blue" />
-                      <h3 className="heading-serif text-2xl">Mapa Interativo</h3>
+                      <h3 className="heading-serif text-2xl">Jogo de Capitais</h3>
                     </div>
                     <p className="text-sm text-slate-600 leading-relaxed">
-                      Navegue pelo mapa e clique nos países destacados em azul. Ao selecionar um país, o registro detalhado aparecerá à direita (no desktop) ou abaixo (em dispositivos móveis), mostrando bandeiras, datas de adesão e monumentos.
+                      Ligue os países às suas capitais. Ao clicar na opção correta, o jogo gera automaticamente o próximo desafio. Receberá feedback imediato sobre cada resposta.
                     </p>
                   </div>
 
-                  <div className="asymmetric-card">
+                  <div className="asymmetric-card border-l-eu-gold">
                     <div className="flex items-center gap-4 mb-4">
                       <History className="text-eu-blue" />
-                      <h3 className="heading-serif text-2xl">Cronologia</h3>
+                      <h3 className="heading-serif text-2xl">Manual Digital</h3>
                     </div>
                     <p className="text-sm text-slate-600 leading-relaxed">
-                      A secção de história apresenta uma linha do tempo vertical. Utilize o scroll para percorrer os eventos mais marcantes da fundação da União Europeia.
+                      Utilize o menu lateral para navegar entre as secções de história, instituições e direitos de cidadania.
                     </p>
                   </div>
                 </div>
 
                 <div className="space-y-8">
-                  <div className="asymmetric-card border-l-eu-gold">
+                  <div className="asymmetric-card bg-slate-900 text-white">
                     <div className="flex items-center gap-4 mb-4">
-                      <Landmark className="text-eu-blue" />
-                      <h3 className="heading-serif text-2xl">Estrutura Política</h3>
+                      <div className="p-2 bg-eu-gold text-slate-900 rounded-sm">
+                         <BookOpen size={20} />
+                      </div>
+                      <h3 className="heading-serif text-2xl text-white">Como Atualizar no GitHub?</h3>
                     </div>
-                    <p className="text-sm text-slate-600 leading-relaxed">
-                      Explore as diversas instituições que compõem a União Europeia. Cada cartão detalha o papel, a localização e a função específica desse órgão no equilíbrio de poderes.
-                    </p>
-                  </div>
-
-                  <div className="asymmetric-card border-l-eu-gold">
-                    <div className="flex items-center gap-4 mb-4">
-                      <Users className="text-eu-blue" />
-                      <h3 className="heading-serif text-2xl">Cartilha de Cidadania</h3>
+                    <div className="space-y-4">
+                      <p className="text-xs text-slate-400 font-light leading-relaxed">
+                        Como já configurámos as <strong>GitHub Actions</strong> no seu repositório, o processo é automático sempre que faz o "Push" das alterações:
+                      </p>
+                      <ol className="text-xs space-y-4 list-decimal pl-4 text-slate-300">
+                        <li>No painel lateral do AI Studio, selecione o ícone de <strong>GitHub</strong>.</li>
+                        <li>Escreva uma mensagem breve do que alterou (ex: "Atualização do jogo de capitais").</li>
+                        <li>Clique no botão <strong>Commit & Push</strong>.</li>
+                        <li>O GitHub detetará as alterações e iniciará automaticamente a publicação em 1-2 minutos.</li>
+                      </ol>
                     </div>
-                    <p className="text-sm text-slate-600 leading-relaxed">
-                      Informações vitais sobre os direitos que possui como cidadão da UE, incluindo acesso à saúde e proteção internacional.
-                    </p>
                   </div>
                 </div>
               </div>
 
               <div className="border border-editorial-border p-8 bg-white/50 text-center">
-                 <p className="micro-label opacity-40">Resolução Recomendada</p>
-                 <p className="text-xs italic mt-2">Para uma experiência editorial completa, recomendamos visualização em ecrãs com largura superior a 1024px.</p>
+                 <p className="micro-label opacity-40">Estado da Publicação</p>
+                 <p className="text-xs italic mt-2">A sua aplicação está ativa em: <a href="https://proftfaria.github.io/Euro-guia/" target="_blank" className="text-eu-blue border-b border-eu-blue">proftfaria.github.io/Euro-guia/</a></p>
               </div>
             </motion.div>
           )}
@@ -535,9 +530,9 @@ export default function App() {
                   </button>
                 ))}
               </nav>
-              <div className="mt-8 border border-editorial-border bg-white p-4">
+              <div className="mt-8 border border-editorial-border bg-white p-4 shadow-editorial">
                 <p className="micro-label text-eu-blue mb-2">Suporte</p>
-                <p className="text-[10px] opacity-60">Consulte o guia para aprender a navegar.</p>
+                <p className="text-[10px] opacity-60">Consulte o guia para aprender a navegar e atualizar.</p>
                 <button 
                   onClick={() => { setActiveTab('guia'); setIsSidebarOpen(false); }}
                   className="mt-4 text-[10px] font-bold uppercase border-b border-eu-blue"
