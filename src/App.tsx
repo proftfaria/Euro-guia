@@ -10,13 +10,12 @@ import {
   Map as MapIcon, 
   Landmark, 
   Users, 
-  HelpCircle,
+  BookOpen,
   Menu,
   X,
   CreditCard
 } from "lucide-react";
 import { euCountries, euTimeline, euInstitutions } from "./data/euData";
-import { askGemini } from "./services/geminiService";
 
 // --- Sub-components ---
 
@@ -70,71 +69,6 @@ const TimelineNode: React.FC<TimelineNodeProps> = ({ event, index }) => (
   </div>
 );
 
-const Chatbot = () => {
-  const [query, setQuery] = useState("");
-  const [messages, setMessages] = useState<{ role: 'user' | 'bot', text: string }[]>([]);
-  const [loading, setLoading] = useState(false);
-
-  const handleSend = async () => {
-    if (!query.trim()) return;
-    const userMsg = { role: 'user' as const, text: query };
-    setMessages([...messages, userMsg]);
-    setQuery("");
-    setLoading(true);
-    
-    const response = await askGemini(query, "Contexto: Guia de estudo interativo da UE.");
-    setMessages(prev => [...prev, { role: 'bot', text: response }]);
-    setLoading(false);
-  };
-
-  return (
-    <div className="bg-editorial-ink text-white p-6 rounded-sm shadow-xl flex flex-col h-[400px] border border-white/10">
-      <div className="flex items-center gap-3 mb-6 border-b border-white/10 pb-4">
-        <div className="bg-eu-gold p-2">
-          <HelpCircle className="text-slate-900 w-5 h-5" />
-        </div>
-        <div>
-          <h3 className="heading-serif text-lg text-white">Assistente Digital</h3>
-          <p className="micro-label text-eu-gold opacity-100">Cidadania • Historia • Politica</p>
-        </div>
-      </div>
-      
-      <div className="flex-1 overflow-y-auto mb-4 space-y-4 pr-2 scrollbar-thin">
-        {messages.length === 0 && (
-          <p className="text-center text-slate-400 mt-6 text-xs italic leading-relaxed">
-            Consulte o compêndio interativo através da nossa inteligência artificial especializada.
-          </p>
-        )}
-        {messages.map((m, i) => (
-          <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[85%] p-3 text-xs leading-relaxed ${m.role === 'user' ? 'bg-eu-blue text-white rounded-l-lg rounded-t-lg' : 'bg-white/5 text-slate-200 border border-white/10 rounded-r-lg rounded-t-lg'}`}>
-              {m.text}
-            </div>
-          </div>
-        ))}
-        {loading && <div className="text-eu-gold text-[10px] uppercase tracking-widest animate-pulse">Processando dados...</div>}
-      </div>
-
-      <div className="flex gap-2 border-t border-white/10 pt-4">
-        <input 
-          type="text" 
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-          placeholder="Consultar guia..."
-          className="flex-1 bg-white/5 border border-white/10 px-4 py-2 text-xs focus:ring-1 focus:ring-eu-gold outline-none"
-        />
-        <button 
-          onClick={handleSend}
-          className="bg-eu-gold text-slate-900 font-bold px-4 py-2 text-[10px] uppercase tracking-widest hover:bg-white transition-colors"
-        >
-          Perguntar
-        </button>
-      </div>
-    </div>
-  );
-};
-
 // --- Main App Component ---
 
 export default function App() {
@@ -148,6 +82,7 @@ export default function App() {
     { id: 'historia', label: 'Cronologia', icon: History },
     { id: 'instituicoes', label: 'Instituições', icon: Landmark },
     { id: 'cidadania', label: 'Cidadania', icon: Users },
+    { id: 'guia', label: 'Guia do Utilizador', icon: BookOpen },
   ];
 
   return (
@@ -181,8 +116,17 @@ export default function App() {
           ))}
         </nav>
 
-        <div>
-           <Chatbot />
+        <div className="mt-8">
+          <div className="p-6 border border-editorial-border bg-white shadow-editorial">
+            <h4 className="micro-label text-eu-blue mb-2">Suporte e Ajuda</h4>
+            <p className="text-[10px] leading-relaxed opacity-60">Consulte o guia para aprender a navegar nesta edição digital.</p>
+            <button 
+              onClick={() => setActiveTab('guia')}
+              className="mt-4 text-[10px] uppercase font-bold text-eu-blue border-b border-eu-blue/20"
+            >
+              Abrir Guia
+            </button>
+          </div>
         </div>
 
         <footer className="mt-8 pt-6 border-t border-editorial-border flex flex-col gap-2">
@@ -479,6 +423,74 @@ export default function App() {
               </div>
             </motion.div>
           )}
+
+          {activeTab === 'guia' && (
+            <motion.div 
+               key="guia"
+               initial={{ opacity: 0 }}
+               animate={{ opacity: 1 }}
+               className="space-y-16"
+            >
+              <header className="text-center max-w-3xl mx-auto space-y-4 border-b border-editorial-ink pb-12">
+                <p className="micro-label text-eu-blue opacity-100">Manual • Ajuda ao Utilizador</p>
+                <h2 className="heading-serif text-6xl">Instruções de Navegação</h2>
+                <p className="text-slate-500 text-lg font-light leading-relaxed">
+                  Aprenda a interagir com este manual informativo e a explorar todo o conteúdo disponível.
+                </p>
+              </header>
+
+              <div className="grid md:grid-cols-2 gap-12">
+                <div className="space-y-8">
+                  <div className="asymmetric-card">
+                    <div className="flex items-center gap-4 mb-4">
+                      <MapIcon className="text-eu-blue" />
+                      <h3 className="heading-serif text-2xl">Mapa Interativo</h3>
+                    </div>
+                    <p className="text-sm text-slate-600 leading-relaxed">
+                      Navegue pelo mapa e clique nos países destacados em azul. Ao selecionar um país, o registro detalhado aparecerá à direita (no desktop) ou abaixo (em dispositivos móveis), mostrando bandeiras, datas de adesão e monumentos.
+                    </p>
+                  </div>
+
+                  <div className="asymmetric-card">
+                    <div className="flex items-center gap-4 mb-4">
+                      <History className="text-eu-blue" />
+                      <h3 className="heading-serif text-2xl">Cronologia</h3>
+                    </div>
+                    <p className="text-sm text-slate-600 leading-relaxed">
+                      A secção de história apresenta uma linha do tempo vertical. Utilize o scroll para percorrer os eventos mais marcantes da fundação da União Europeia.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-8">
+                  <div className="asymmetric-card border-l-eu-gold">
+                    <div className="flex items-center gap-4 mb-4">
+                      <Landmark className="text-eu-blue" />
+                      <h3 className="heading-serif text-2xl">Estrutura Política</h3>
+                    </div>
+                    <p className="text-sm text-slate-600 leading-relaxed">
+                      Explore as diversas instituições que compõem a União Europeia. Cada cartão detalha o papel, a localização e a função específica desse órgão no equilíbrio de poderes.
+                    </p>
+                  </div>
+
+                  <div className="asymmetric-card border-l-eu-gold">
+                    <div className="flex items-center gap-4 mb-4">
+                      <Users className="text-eu-blue" />
+                      <h3 className="heading-serif text-2xl">Cartilha de Cidadania</h3>
+                    </div>
+                    <p className="text-sm text-slate-600 leading-relaxed">
+                      Informações vitais sobre os direitos que possui como cidadão da UE, incluindo acesso à saúde e proteção internacional.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="border border-editorial-border p-8 bg-white/50 text-center">
+                 <p className="micro-label opacity-40">Resolução Recomendada</p>
+                 <p className="text-xs italic mt-2">Para uma experiência editorial completa, recomendamos visualização em ecrãs com largura superior a 1024px.</p>
+              </div>
+            </motion.div>
+          )}
         </AnimatePresence>
       </main>
 
@@ -505,7 +517,7 @@ export default function App() {
                 <h1 className="heading-serif text-4xl">EuroGuia</h1>
                 <div className="h-px bg-editorial-ink mt-4 w-full" />
               </div>
-              <nav className="flex-1 space-y-1 mb-8">
+              <nav className="flex-1 space-y-1 mb-8 overflow-y-auto">
                 {tabs.map(tab => (
                   <button
                     key={tab.id}
@@ -523,8 +535,15 @@ export default function App() {
                   </button>
                 ))}
               </nav>
-              <div className="mt-8">
-                <Chatbot />
+              <div className="mt-8 border border-editorial-border bg-white p-4">
+                <p className="micro-label text-eu-blue mb-2">Suporte</p>
+                <p className="text-[10px] opacity-60">Consulte o guia para aprender a navegar.</p>
+                <button 
+                  onClick={() => { setActiveTab('guia'); setIsSidebarOpen(false); }}
+                  className="mt-4 text-[10px] font-bold uppercase border-b border-eu-blue"
+                >
+                  Abrir Guia
+                </button>
               </div>
             </motion.aside>
           </>
