@@ -407,7 +407,7 @@ export default function App() {
 
         <footer className="mt-8 pt-6 border-t border-editorial-border flex flex-col gap-2">
           <p className="micro-label opacity-30">In Varietate Concordia</p>
-          <p className="text-[8px] opacity-20 uppercase tracking-widest font-bold">© 2026 Portal de Conhecimento Europeu</p>
+          <p className="text-[8px] opacity-20 uppercase tracking-widest font-bold">Teodósio Faria ©2026 Portal de Conhecimento Europeu</p>
         </footer>
       </aside>
 
