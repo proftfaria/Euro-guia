@@ -372,5 +372,195 @@ export const mainQuiz = [
       en: "The Berlaymont building in Brussels is the Commission's headquarters.",
       fr: "Le bâtiment Berlaymont à Bruxelles est le siège de la Commission."
     }
+  },
+    {
+    id: 11,
+    question: {
+      pt: "Qual tratado criou oficialmente a União Europeia?",
+      en: "Which treaty officially created the European Union?",
+      fr: "Quel traité a officiellement créé l'Union européenne ?"
+    },
+    options: [
+      { id: 'a', text: { pt: "Tratado de Maastricht", en: "Treaty of Maastricht", fr: "Traité de Maastricht" } },
+      { id: 'b', text: { pt: "Tratado de Lisboa", en: "Treaty of Lisbon", fr: "Traité de Lisbonne" } },
+      { id: 'c', text: { pt: "Tratado de Nice", en: "Treaty of Nice", fr: "Traité de Nice" } }
+    ],
+    correct: 'a',
+    explanation: {
+      pt: "O Tratado de Maastricht, assinado em 1992, criou oficialmente a União Europeia.",
+      en: "The Maastricht Treaty, signed in 1992, officially created the European Union.",
+      fr: "Le traité de Maastricht, signé en 1992, a officiellement créé l'Union européenne."
+    }
+  },
+  {
+    id: 12,
+    question: {
+      pt: "Qual instituição propõe novas leis na UE?",
+      en: "Which institution proposes new laws in the EU?",
+      fr: "Quelle institution propose de nouvelles lois dans l'UE ?"
+    },
+    options: [
+      { id: 'a', text: { pt: "Comissão Europeia", en: "European Commission", fr: "Commission européenne" } },
+      { id: 'b', text: { pt: "Parlamento Europeu", en: "European Parliament", fr: "Parlement européen" } },
+      { id: 'c', text: { pt: "Conselho Europeu", en: "European Council", fr: "Conseil européen" } }
+    ],
+    correct: 'a',
+    explanation: {
+      pt: "A Comissão Europeia detém o direito de iniciativa legislativa.",
+      en: "The European Commission holds the right of legislative initiative.",
+      fr: "La Commission européenne détient le droit d'initiative législative."
+    }
+  },
+  {
+    id: 13,
+    question: {
+      pt: "Quantos países fazem parte da União Europeia atualmente?",
+      en: "How many countries are currently members of the European Union?",
+      fr: "Combien de pays font actuellement partie de l'Union européenne ?"
+    },
+    options: [
+      { id: 'a', text: { pt: "27", en: "27", fr: "27" } },
+      { id: 'b', text: { pt: "28", en: "28", fr: "28" } },
+      { id: 'c', text: { pt: "25", en: "25", fr: "25" } }
+    ],
+    correct: 'a',
+    explanation: {
+      pt: "Após a saída do Reino Unido, a UE passou a ter 27 Estados-Membros.",
+      en: "After the United Kingdom left, the EU now has 27 Member States.",
+      fr: "Après la sortie du Royaume-Uni, l'UE compte 27 États membres."
+    }
+  },
+  {
+    id: 14,
+    question: {
+      pt: "Qual é a moeda oficial da Zona Euro?",
+      en: "What is the official currency of the Eurozone?",
+      fr: "Quelle est la monnaie officielle de la zone euro ?"
+    },
+    options: [
+      { id: 'a', text: { pt: "Euro", en: "Euro", fr: "Euro" } },
+      { id: 'b', text: { pt: "Franco Europeu", en: "European Franc", fr: "Franc européen" } },
+      { id: 'c', text: { pt: "ECU", en: "ECU", fr: "ECU" } }
+    ],
+    correct: 'a',
+    explanation: {
+      pt: "O euro é a moeda oficial utilizada pela maioria dos países da UE.",
+      en: "The euro is the official currency used by most EU countries.",
+      fr: "L’euro est la monnaie officielle utilisée par la majorité des pays de l’UE."
+    }
+  },
+  {
+    id: 15,
+    question: {
+      pt: "Qual órgão representa os governos nacionais dos Estados-Membros?",
+      en: "Which body represents the national governments of the Member States?",
+      fr: "Quel organe représente les gouvernements nationaux des États membres ?"
+    },
+    options: [
+      { id: 'a', text: { pt: "Conselho da União Europeia", en: "Council of the European Union", fr: "Conseil de l'Union européenne" } },
+      { id: 'b', text: { pt: "Parlamento Europeu", en: "European Parliament", fr: "Parlement européen" } },
+      { id: 'c', text: { pt: "Comissão Europeia", en: "European Commission", fr: "Commission européenne" } }
+    ],
+    correct: 'a',
+    explanation: {
+      pt: "O Conselho da UE reúne ministros dos Estados-Membros por área política.",
+      en: "The Council of the EU brings together ministers from Member States by policy area.",
+      fr: "Le Conseil de l’UE réunit les ministres des États membres par domaine politique."
+    }
+  },
+  {
+    id: 16,
+    question: {
+      pt: "Qual país saiu da União Europeia em 2020?",
+      en: "Which country left the European Union in 2020?",
+      fr: "Quel pays a quitté l'Union européenne en 2020 ?"
+    },
+    options: [
+      { id: 'a', text: { pt: "Reino Unido", en: "United Kingdom", fr: "Royaume-Uni" } },
+      { id: 'b', text: { pt: "Noruega", en: "Norway", fr: "Norvège" } },
+      { id: 'c', text: { pt: "Suíça", en: "Switzerland", fr: "Suisse" } }
+    ],
+    correct: 'a',
+    explanation: {
+      pt: "O Reino Unido saiu oficialmente da UE a 31 de janeiro de 2020.",
+      en: "The United Kingdom officially left the EU on January 31, 2020.",
+      fr: "Le Royaume-Uni a officiellement quitté l'UE le 31 janvier 2020."
+    }
+  },
+  {
+    id: 17,
+    question: {
+      pt: "Qual instituição assegura a estabilidade do euro?",
+      en: "Which institution ensures the stability of the euro?",
+      fr: "Quelle institution assure la stabilité de l'euro ?"
+    },
+    options: [
+      { id: 'a', text: { pt: "Banco Central Europeu", en: "European Central Bank", fr: "Banque centrale européenne" } },
+      { id: 'b', text: { pt: "Comissão Europeia", en: "European Commission", fr: "Commission européenne" } },
+      { id: 'c', text: { pt: "Tribunal de Contas", en: "Court of Auditors", fr: "Cour des comptes" } }
+    ],
+    correct: 'a',
+    explanation: {
+      pt: "O BCE é responsável pela política monetária da Zona Euro.",
+      en: "The ECB is responsible for the monetary policy of the Eurozone.",
+      fr: "La BCE est responsable de la politique monétaire de la zone euro."
+    }
+  },
+  {
+    id: 18,
+    question: {
+      pt: "Qual destas cidades acolhe sessões plenárias do Parlamento Europeu?",
+      en: "Which of these cities hosts plenary sessions of the European Parliament?",
+      fr: "Laquelle de ces villes accueille des sessions plénières du Parlement européen ?"
+    },
+    options: [
+      { id: 'a', text: { pt: "Estrasburgo", en: "Strasbourg", fr: "Strasbourg" } },
+      { id: 'b', text: { pt: "Bruxelas", en: "Brussels", fr: "Bruxelles" } },
+      { id: 'c', text: { pt: "Luxemburgo", en: "Luxembourg", fr: "Luxembourg" } }
+    ],
+    correct: 'a',
+    explanation: {
+      pt: "As sessões plenárias oficiais decorrem em Estrasburgo.",
+      en: "Official plenary sessions take place in Strasbourg.",
+      fr: "Les sessions plénières officielles ont lieu à Strasbourg."
+    }
+  },
+  {
+    id: 19,
+    question: {
+      pt: "Qual é a duração do mandato da Comissão Europeia?",
+      en: "What is the length of the European Commission’s mandate?",
+      fr: "Quelle est la durée du mandat de la Commission européenne ?"
+    },
+    options: [
+      { id: 'a', text: { pt: "5 anos", en: "5 years", fr: "5 ans" } },
+      { id: 'b', text: { pt: "4 anos", en: "4 years", fr: "4 ans" } },
+      { id: 'c', text: { pt: "6 anos", en: "6 years", fr: "6 ans" } }
+    ],
+    correct: 'a',
+    explanation: {
+      pt: "O mandato da Comissão Europeia dura cinco anos.",
+      en: "The European Commission’s mandate lasts five years.",
+      fr: "Le mandat de la Commission européenne dure cinq ans."
+    }
+  },
+  {
+    id: 20,
+    question: {
+      pt: "Qual princípio garante decisões tomadas ao nível mais próximo do cidadão?",
+      en: "Which principle ensures decisions are taken as close as possible to citizens?",
+      fr: "Quel principe garantit que les décisions soient prises au plus près des citoyens ?"
+    },
+    options: [
+      { id: 'a', text: { pt: "Princípio da subsidiariedade", en: "Principle of subsidiarity", fr: "Principe de subsidiarité" } },
+      { id: 'b', text: { pt: "Princípio da proporcionalidade", en: "Principle of proportionality", fr: "Principe de proportionnalité" } },
+      { id: 'c', text: { pt: "Princípio da unanimidade", en: "Principle of unanimity", fr: "Principe d’unanimité" } }
+    ],
+    correct: 'a',
+    explanation: {
+      pt: "A subsidiariedade garante que a UE só atua quando os Estados não conseguem agir eficazmente.",
+      en: "Subsidiarity ensures the EU acts only when Member States cannot act effectively.",
+      fr: "La subsidiarité garantit que l’UE n’agit que lorsque les États membres ne peuvent pas agir efficacement."
+    }
   }
 ];
