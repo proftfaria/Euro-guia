@@ -104,16 +104,16 @@ export const glossary = [
     term: { pt: "Espaço Schengen", en: "Schengen Area", fr: "Espace Schengen" },
     def: {
       pt: "Área de livre circulação onde os controlos nas fronteiras internas foram abolidos.",
-      en: "The area comprising 29 European countries that have officially abolished border control at their mutual borders.",
+      en: "The area comprising European countries that have officially abolished border control at their mutual borders.",
       fr: "Un espace de libre circulation des personnes entre les États signataires de l'accord de Schengen."
     }
   },
   {
     id: 'eurozone',
-    term: { pt: "Zona Euro", en: "Eurozone", fr: "Zone Euro" },
+    term: { pt: "Zona Euro", en: "Eurozone", fr: "Zone euro" },
     def: {
       pt: "União monetária dos Estados-membros da UE que adotaram o euro como moeda oficial.",
-      en: "A currency union of 20 member states of the European Union that have adopted the euro.",
+      en: "A currency union of EU member states that have adopted the euro as their official currency.",
       fr: "L'ensemble des pays de l'Union européenne qui utilisent l'euro comme monnaie unique."
     }
   },
@@ -122,8 +122,62 @@ export const glossary = [
     term: { pt: "Parlamento Europeu", en: "European Parliament", fr: "Parlement européen" },
     def: {
       pt: "A única instituição da UE eleita por sufrágio direto, representando os cidadãos.",
-      en: "The only directly elected EU institution, representing the citizens of the EU.",
+      en: "The only directly elected EU institution, representing EU citizens.",
       fr: "La seule institution de l'UE élue au suffrage direct, représentant les citoyens."
+    }
+  },
+  {
+    id: 'commission',
+    term: { pt: "Comissão Europeia", en: "European Commission", fr: "Commission européenne" },
+    def: {
+      pt: "Órgão executivo da UE responsável por propor legislação e garantir a sua aplicação.",
+      en: "The EU’s executive body responsible for proposing legislation and enforcing EU law.",
+      fr: "L'organe exécutif de l'UE chargé de proposer des lois et de veiller à leur application."
+    }
+  },
+  {
+    id: 'council',
+    term: { pt: "Conselho da União Europeia", en: "Council of the European Union", fr: "Conseil de l'Union européenne" },
+    def: {
+      pt: "Instituição onde os governos dos Estados-membros negoceiam e adotam legislação da UE.",
+      en: "An institution where EU member state governments negotiate and adopt EU legislation.",
+      fr: "Institution où les gouvernements des États membres négocient et adoptent la législation européenne."
+    }
+  },
+  {
+    id: 'european-council',
+    term: { pt: "Conselho Europeu", en: "European Council", fr: "Conseil européen" },
+    def: {
+      pt: "Define as orientações políticas gerais e prioridades da União Europeia.",
+      en: "Defines the overall political direction and priorities of the European Union.",
+      fr: "Fixe les grandes orientations et priorités politiques de l'Union européenne."
+    }
+  },
+  {
+    id: 'single-market',
+    term: { pt: "Mercado Único", en: "Single Market", fr: "Marché unique" },
+    def: {
+      pt: "Área sem fronteiras internas que garante a livre circulação de bens, serviços, pessoas e capitais.",
+      en: "An area without internal borders ensuring the free movement of goods, services, people, and capital.",
+      fr: "Un espace sans frontières intérieures garantissant la libre circulation des marchandises, services, personnes et capitaux."
+    }
+  },
+  {
+    id: 'charter',
+    term: { pt: "Carta dos Direitos Fundamentais", en: "Charter of Fundamental Rights", fr: "Charte des droits fondamentaux" },
+    def: {
+      pt: "Documento que consagra os direitos e liberdades fundamentais na União Europeia.",
+      en: "A document that enshrines fundamental rights and freedoms within the European Union.",
+      fr: "Un texte qui consacre les droits et libertés fondamentaux au sein de l'Union européenne."
+    }
+  },
+  {
+    id: 'brexit',
+    term: { pt: "Brexit", en: "Brexit", fr: "Brexit" },
+    def: {
+      pt: "Processo de saída do Reino Unido da União Europeia.",
+      en: "The process through which the United Kingdom withdrew from the European Union.",
+      fr: "Le processus par lequel le Royaume-Uni a quitté l'Union européenne."
     }
   }
 ];
