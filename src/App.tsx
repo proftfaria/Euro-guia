@@ -5,6 +5,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import bandaDesenhadaImg from './assets/images/banda-desenhada.jpg';
 import { 
   History, 
   Map as MapIcon, 
@@ -1106,7 +1107,7 @@ export default function App() {
                    <p className="text-slate-500 italic font-light mt-2">{(t as any).instituicoes.comicDesc}</p>
                  </header>
                  <img 
-                   src="/banda-desenhada.jpg" 
+                   src={bandaDesenhadaImg} 
                    alt={(t as any).instituicoes.comicTitle} 
                    className="w-full h-auto border border-editorial-ink/10 rounded-sm"
                  />
