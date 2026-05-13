@@ -132,9 +132,10 @@ const LanguageSwitcher = ({ current, setLang }: { current: string, setLang: (l: 
 
 interface InstitutionItemProps {
   inst: any;
+  lang: 'pt' | 'en' | 'fr';
 }
 
-const InstitutionItem: React.FC<InstitutionItemProps> = ({ inst }) => (
+const InstitutionItem: React.FC<InstitutionItemProps> = ({ inst, lang }) => (
   <motion.div 
     initial={{ opacity: 0, y: 20 }}
     whileInView={{ opacity: 1, y: 0 }}
@@ -145,22 +146,23 @@ const InstitutionItem: React.FC<InstitutionItemProps> = ({ inst }) => (
       <div className="bg-eu-blue/5 p-3 rounded-sm border border-eu-blue/10">
         <Landmark className="text-eu-blue w-6 h-6" />
       </div>
-      <span className="micro-label opacity-40">{inst.role}</span>
+      <span className="micro-label opacity-40">{inst.role[lang]}</span>
     </div>
-    <h3 className="heading-serif text-2xl mb-2">{inst.name}</h3>
+    <h3 className="heading-serif text-2xl mb-2">{inst.name[lang]}</h3>
     <p className="micro-label text-eu-blue mb-3 flex items-center gap-2">
-      <MapIcon size={12} /> {inst.location}
+      <MapIcon size={12} /> {inst.location[lang]}
     </p>
-    <p className="text-sm text-slate-600 leading-relaxed">{inst.description}</p>
+    <p className="text-sm text-slate-600 leading-relaxed">{inst.description[lang]}</p>
   </motion.div>
 );
 
 interface TimelineNodeProps {
   event: any;
   index: number;
+  lang: 'pt' | 'en' | 'fr';
 }
 
-const TimelineNode: React.FC<TimelineNodeProps> = ({ event, index }) => (
+const TimelineNode: React.FC<TimelineNodeProps> = ({ event, index, lang }) => (
   <div className="relative flex gap-8 pb-12 group">
     <div className="flex flex-col items-center">
       <div className="heading-serif text-xl text-eu-blue z-10 bg-editorial-bg px-2">
@@ -174,8 +176,8 @@ const TimelineNode: React.FC<TimelineNodeProps> = ({ event, index }) => (
       viewport={{ once: true }}
       className="flex-1 border-t border-editorial-ink/10 pt-4"
     >
-      <h3 className="heading-serif text-2xl mb-2 text-editorial-ink">{event.title}</h3>
-      <p className="text-sm text-slate-600 leading-relaxed">{event.description}</p>
+      <h3 className="heading-serif text-2xl mb-2 text-editorial-ink">{event.title[lang]}</h3>
+      <p className="text-sm text-slate-600 leading-relaxed">{event.description[lang]}</p>
     </motion.div>
   </div>
 );
@@ -1061,16 +1063,16 @@ export default function App() {
                className="space-y-16"
             >
               <header className="text-center max-w-2xl mx-auto space-y-4 border-b border-editorial-ink pb-12">
-                <p className="micro-label text-eu-blue opacity-100">Arquivo • Memória Europeia</p>
-                <h2 className="heading-serif text-6xl">Crónica da Integração</h2>
-                <p className="text-slate-500 italic font-light italic leading-relaxed">
-                  Uma narrativa cronológica dos pactos, tratados e alinhamentos que consolidaram a paz no continente europeu desde o pós-guerra.
+                <p className="micro-label text-eu-blue opacity-100">{(t as any).historia.archive}</p>
+                <h2 className="heading-serif text-6xl">{(t as any).historia.title}</h2>
+                <p className="text-slate-500 italic font-light leading-relaxed">
+                  {(t as any).historia.subtitle}
                 </p>
               </header>
 
               <div className="max-w-3xl mx-auto px-8">
                 {euTimeline.map((event, i) => (
-                  <TimelineNode key={i} event={event} index={i} />
+                  <TimelineNode key={i} event={event} index={i} lang={lang} />
                 ))}
               </div>
             </motion.div>
@@ -1085,28 +1087,28 @@ export default function App() {
             >
               <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-editorial-ink pb-12">
                 <div className="space-y-4">
-                   <p className="micro-label text-eu-blue opacity-100">Governança • Pilares da União</p>
-                   <h2 className="heading-serif text-5xl lg:text-7xl">Equilíbrio de Poderes</h2>
-                   <p className="text-slate-500 max-w-lg italic font-light">O Triângulo Institucional e os órgãos de fiscalização que regem o Estado de Direito na Europa.</p>
+                   <p className="micro-label text-eu-blue opacity-100">{(t as any).instituicoes.governance}</p>
+                   <h2 className="heading-serif text-5xl lg:text-7xl">{(t as any).instituicoes.title}</h2>
+                   <p className="text-slate-500 max-w-lg italic font-light">{(t as any).instituicoes.subtitle}</p>
                 </div>
               </header>
 
               <div className="grid md:grid-cols-2 gap-8">
                 {euInstitutions.map((inst, i) => (
-                  <InstitutionItem key={i} inst={inst} />
+                  <InstitutionItem key={i} inst={inst} lang={lang} />
                 ))}
               </div>
 
               <div className="border border-editorial-ink p-12 bg-white flex flex-col items-center text-center space-y-6">
                 <div className="w-16 h-px bg-eu-gold" />
-                <h3 className="heading-serif text-3xl">O Primado dos Tratados</h3>
+                <h3 className="heading-serif text-3xl">{(t as any).instituicoes.primacy}</h3>
                 <p className="text-slate-600 leading-relaxed max-w-2xl font-light italic">
-                  \"A União não é um super-Estado, mas uma associação de Estados soberanos regidos por tratados internacionais que definem as suas competências exclusivas e partilhadas.\"
+                  {(t as any).instituicoes.quote}
                 </p>
                 <div className="grid grid-cols-3 gap-8 w-full max-w-md pt-8 border-t border-editorial-border">
-                   <div><p className="micro-label mb-1">Roma</p><p className="heading-serif text-xl opacity-40">1957</p></div>
-                   <div><p className="micro-label mb-1">Maastricht</p><p className="heading-serif text-xl opacity-40">1992</p></div>
-                   <div><p className="micro-label mb-1">Lisboa</p><p className="heading-serif text-xl opacity-40">2007</p></div>
+                   <div><p className="micro-label mb-1">{(t as any).instituicoes.roma}</p><p className="heading-serif text-xl opacity-40">1957</p></div>
+                   <div><p className="micro-label mb-1">{(t as any).instituicoes.maastricht}</p><p className="heading-serif text-xl opacity-40">1992</p></div>
+                   <div><p className="micro-label mb-1">{(t as any).instituicoes.lisboa}</p><p className="heading-serif text-xl opacity-40">2007</p></div>
                 </div>
               </div>
             </motion.div>

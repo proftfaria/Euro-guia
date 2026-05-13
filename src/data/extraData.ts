@@ -13,6 +13,21 @@ export const translations = {
       monumentos: "Monumentos",
       guia: "Ajuda"
     },
+    historia: {
+      archive: "Arquivo • Memória Europeia",
+      title: "Crónica da Integração",
+      subtitle: "Uma narrativa cronológica dos pactos, tratados e alinhamentos que consolidaram a paz no continente europeu desde o pós-guerra."
+    },
+    instituicoes: {
+      governance: "Governança • Pilares da União",
+      title: "Equilíbrio de Poderes",
+      subtitle: "O Triângulo Institucional e os órgãos de fiscalização que regem o Estado de Direito na Europa.",
+      primacy: "O Primado dos Tratados",
+      quote: "\"A União não é um super-Estado, mas uma associação de Estados soberanos regidos por tratados internacionais que definem as suas competências exclusivas e partilhadas.\"",
+      roma: "Roma",
+      maastricht: "Maastricht",
+      lisboa: "Lisboa"
+    },
     common: {
       score: "Pontuação",
       correct: "Correto!",
@@ -46,6 +61,21 @@ export const translations = {
       monumentos: "Monuments",
       guia: "Help"
     },
+    historia: {
+      archive: "Archive • European Memory",
+      title: "Integration Chronicle",
+      subtitle: "A chronological narrative of the pacts, treaties and alignments that consolidated peace on the European continent since the post-war period."
+    },
+    instituicoes: {
+      governance: "Governance • Pillars of the Union",
+      title: "Balance of Powers",
+      subtitle: "The Institutional Triangle and the oversight bodies that govern the Rule of Law in Europe.",
+      primacy: "The Primacy of Treaties",
+      quote: "\"The Union is not a super-State, but an association of sovereign States governed by international treaties that define their exclusive and shared competences.\"",
+      roma: "Rome",
+      maastricht: "Maastricht",
+      lisboa: "Lisbon"
+    },
     common: {
       score: "Score",
       correct: "Correct!",
@@ -78,6 +108,21 @@ export const translations = {
       quiz: "Super Quiz",
       monumentos: "Monuments",
       guia: "Aide"
+    },
+    historia: {
+      archive: "Archives • Mémoire européenne",
+      title: "Chronique de l'intégration",
+      subtitle: "Un récit chronologique des pactes, traités et alignements qui ont consolidé la paix sur le continent européen depuis l'après-guerre."
+    },
+    instituicoes: {
+      governance: "Gouvernance • Piliers de l'Union",
+      title: "Équilibre des pouvoirs",
+      subtitle: "Le triangle institutionnel et les organes de contrôle qui régissent l'État de droit en Europe.",
+      primacy: "La primauté des traités",
+      quote: "\"L'Union n'est pas un super-État, mais une association d'États souverains régis par des traités internationaux qui définissent leurs compétences exclusives et partagées.\"",
+      roma: "Rome",
+      maastricht: "Maastricht",
+      lisboa: "Lisbonne"
     },
     common: {
       score: "Score",

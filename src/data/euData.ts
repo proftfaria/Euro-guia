@@ -15,15 +15,15 @@ export interface Country {
 
 export interface TimelineEvent {
   year: string;
-  title: string;
-  description: string;
+  title: { pt: string; en: string; fr: string };
+  description: { pt: string; en: string; fr: string };
 }
 
 export interface Institution {
-  name: string;
-  role: string;
-  location: string;
-  description: string;
+  name: { pt: string; en: string; fr: string };
+  role: { pt: string; en: string; fr: string };
+  location: { pt: string; en: string; fr: string };
+  description: { pt: string; en: string; fr: string };
 }
 
 export const euCountries: Country[] = [
@@ -273,50 +273,174 @@ export const euCountries: Country[] = [
 ];
 
 export const euTimeline: TimelineEvent[] = [
-  { year: "1951", title: "Tratado de Paris", description: "Criação da Comunidade Europeia do Carvão e do Aço (CECA) por seis países: Bélgica, França, Alemanha, Itália, Luxemburgo e Países Baixos." },
-  { year: "1957", title: "Tratados de Roma", description: "Criação da Comunidade Económica Europeia (CEE) e da Comunidade Europeia da Energia Atómica (Euratom)." },
-  { year: "1973", title: "Primeiro Alargamento", description: "Dinamarca, Irlanda e Reino Unido aderem à Comunidade Europeia." },
-  { year: "1979", title: "Primeiras Eleições Diretas", description: "Os cidadãos europeus elegem pela primeira vez os membros do Parlamento Europeu por sufrágio universal direto." },
-  { year: "1981", title: "Adesão da Grécia", description: "A Grécia torna-se o décimo país membro." },
-  { year: "1986", title: "Adesão de Portugal e Espanha", description: "Portugal e Espanha aderem à Comunidade Europeia. Assinatura do Ato Único Europeu." },
-  { year: "1992", title: "Tratado de Maastricht", description: "Criação da União Europeia e lançamento das bases para a moeda única e para a política externa e de segurança comum." },
-  { year: "1995", title: "Adesão da Áustria, Finlândia e Suécia", description: "A UE passa a contar com 15 Estados-Membros." },
-  { year: "2002", title: "Introdução do Euro", description: "As notas e moedas de euro entram em circulação em 12 países membros." },
-  { year: "2004", title: "Grande Alargamento", description: "Dez novos países aderem à UE: Chipre, Czechia, Estónia, Hungria, Letónia, Lituânia, Malta, Polónia, Eslováquia e Eslovénia." },
-  { year: "2007", title: "Tratado de Lisboa", description: "Assinatura do tratado que visa tornar a UE mais democrática, eficiente e capaz de enfrentar desafios globais." },
-  { year: "2013", title: "Adesão da Croácia", description: "A Croácia torna-se o 28.º país membro da UE." },
-  { year: "2020", title: "Saída do Reino Unido (Brexit)", description: "O Reino Unido abandona oficialmente a União Europeia." }
+  { 
+    year: "1951", 
+    title: { pt: "Tratado de Paris", en: "Treaty of Paris", fr: "Traité de Paris" }, 
+    description: { 
+      pt: "Criação da Comunidade Europeia do Carvão e do Aço (CECA) por seis países: Bélgica, França, Alemanha, Itália, Luxemburgo e Países Baixos.",
+      en: "Creation of the European Coal and Steel Community (ECSC) by six countries: Belgium, France, Germany, Italy, Luxembourg and the Netherlands.",
+      fr: "Création de la Communauté européenne du charbon et de l'acier (CECA) par six pays : Belgique, France, Allemagne, Italie, Luxembourg et Pays-Bas."
+    } 
+  },
+  { 
+    year: "1957", 
+    title: { pt: "Tratados de Roma", en: "Treaties of Rome", fr: "Traités de Rome" }, 
+    description: { 
+      pt: "Criação da Comunidade Económica Europeia (CEE) e da Comunidade Europeia da Energia Atómica (Euratom).",
+      en: "Creation of the European Economic Community (EEC) and the European Atomic Energy Community (Euratom).",
+      fr: "Création de la Communauté économique européenne (CEE) et de la Communauté européenne de l’énergie atomique (Euratom)."
+    } 
+  },
+  { 
+    year: "1973", 
+    title: { pt: "Primeiro Alargamento", en: "First Enlargement", fr: "Premier élargissement" }, 
+    description: { 
+      pt: "Dinamarca, Irlanda e Reino Unido aderem à Comunidade Europeia.",
+      en: "Denmark, Ireland and the United Kingdom join the European Community.",
+      fr: "Le Danemark, l'Irlande et le Royaume-Uni adhèrent à la Communauté européenne."
+    } 
+  },
+  { 
+    year: "1979", 
+    title: { pt: "Primeiras Eleições Diretas", en: "First Direct Elections", fr: "Premières élections directes" }, 
+    description: { 
+      pt: "Os cidadãos europeus elegem pela primeira vez os membros do Parlamento Europeu por sufrágio universal direto.",
+      en: "European citizens elect the members of the European Parliament for the first time by direct universal suffrage.",
+      fr: "Les citoyens européens élisent pour la première fois les membres du Parlement européen au suffrage universel direct."
+    } 
+  },
+  { 
+    year: "1981", 
+    title: { pt: "Adesão da Grécia", en: "Accession of Greece", fr: "Adhésion de la Grèce" }, 
+    description: { 
+      pt: "A Grécia torna-se o décimo país membro.",
+      en: "Greece becomes the tenth member state.",
+      fr: "La Grèce devient le dixième pays membre."
+    } 
+  },
+  { 
+    year: "1986", 
+    title: { pt: "Adesão de Portugal e Espanha", en: "Accession of Portugal and Spain", fr: "Adhésion de Portugal et d'Espagne" }, 
+    description: { 
+      pt: "Portugal e Espanha aderem à Comunidade Europeia. Assinatura do Ato Único Europeu.",
+      en: "Portugal and Spain join the European Community. Signing of the Single European Act.",
+      fr: "Le Portugal et l'Espagne adhèrent à la Communauté européenne. Signature de l'Acte unique européen."
+    } 
+  },
+  { 
+    year: "1992", 
+    title: { pt: "Tratado de Maastricht", en: "Maastricht Treaty", fr: "Traité de Maastricht" }, 
+    description: { 
+      pt: "Criação da União Europeia e lançamento das bases para a moeda única e para a política externa e de segurança comum.",
+      en: "Creation of the European Union and laying the foundations for the single currency and common foreign and security policy.",
+      fr: "Création de l'Union européenne et lancement des bases de la monnaie unique et de la politique étrangère et de sécurité commune."
+    } 
+  },
+  { 
+    year: "1995", 
+    title: { pt: "Adesão da Áustria, Finlândia e Suécia", en: "Accession of Austria, Finland and Sweden", fr: "Adhésion de l'Autriche, de la Finlande et de la Suède" }, 
+    description: { 
+      pt: "A UE passa a contar com 15 Estados-Membros.",
+      en: "The EU expands to 15 Member States.",
+      fr: "L'UE s'élargit à 15 États membres."
+    } 
+  },
+  { 
+    year: "2002", 
+    title: { pt: "Introdução do Euro", en: "Introduction of the Euro", fr: "Introduction de l'euro" }, 
+    description: { 
+      pt: "As notas e moedas de euro entram em circulação em 12 países membros.",
+      en: "Euro banknotes and coins enter circulation in 12 member states.",
+      fr: "Les billets et pièces en euros entrent en circulation dans 12 pays membres."
+    } 
+  },
+  { 
+    year: "2004", 
+    title: { pt: "Grande Alargamento", en: "Great Enlargement", fr: "Grand élargissement" }, 
+    description: { 
+      pt: "Dez novos países aderem à UE: Chipre, Czechia, Estónia, Hungria, Letónia, Lituânia, Malta, Polónia, Eslováquia e Eslovénia.",
+      en: "Ten new countries join the EU: Cyprus, Czechia, Estonia, Hungary, Latvia, Lithuania, Malta, Poland, Slovakia and Slovenia.",
+      fr: "Dix nouveaux pays adhèrent à l'UE : Chypre, Czechia, Estonie, Hongrie, Lettonie, Lituanie, Malte, Pologne, Slovaquie et Slovénie."
+    } 
+  },
+  { 
+    year: "2007", 
+    title: { pt: "Tratado de Lisboa", en: "Lisbon Treaty", fr: "Traité de Lisbonne" }, 
+    description: { 
+      pt: "Assinatura do tratado que visa tornar a UE mais democrática, eficiente e capaz de enfrentar desafios globais.",
+      en: "Signing of the treaty aimed at making the EU more democratic, efficient and capable of addressing global challenges.",
+      fr: "Signature du traité visant à rendre l'UE plus démocratique, plus efficace et plus capable de faire face aux défis mondiaux."
+    } 
+  },
+  { 
+    year: "2013", 
+    title: { pt: "Adesão da Croácia", en: "Accession of Croatia", fr: "Adhésion de la Croatie" }, 
+    description: { 
+      pt: "A Croácia torna-se o 28.º país membro da UE.",
+      en: "Croatia becomes the 28th member state of the EU.",
+      fr: "La Croatie devient le 28e État membre de l'UE."
+    } 
+  },
+  { 
+    year: "2020", 
+    title: { pt: "Saída do Reino Unido (Brexit)", en: "Withdrawal of the UK (Brexit)", fr: "Sortie du Royaume-Uni (Brexit)" }, 
+    description: { 
+      pt: "O Reino Unido abandona oficialmente a União Europeia.",
+      en: "The United Kingdom officially leaves the European Union.",
+      fr: "Le Royaume-Uni quitte officiellement l'Union européenne."
+    } 
+  }
 ];
 
 export const euInstitutions: Institution[] = [
   {
-    name: "Parlamento Europeu",
-    role: "Poder Legislativo",
-    location: "Estrasburgo (França) / Bruxelas (Bélgica)",
-    description: "Representa os cidadãos da UE e é eleito diretamente por eles a cada 5 anos. Partilha o poder legislativo com o Conselho."
+    name: { pt: "Parlamento Europeu", en: "European Parliament", fr: "Parlement européen" },
+    role: { pt: "Poder Legislativo", en: "Legislative Power", fr: "Pouvoir législatif" },
+    location: { pt: "Estrasburgo (França) / Bruxelas (Bélgica)", en: "Strasbourg (France) / Brussels (Belgium)", fr: "Strasbourg (France) / Bruxelles (Belgique)" },
+    description: {
+      pt: "Representa os cidadãos da UE e é eleito diretamente por eles a cada 5 anos. Partilha o poder legislativo com o Conselho.",
+      en: "Represents EU citizens and is directly elected by them every 5 years. Shares legislative power with the Council.",
+      fr: "Représente les citoyens de l'UE et est élu directement par eux tous les 5 ans. Partage le pouvoir législatif avec le Conseil."
+    }
   },
   {
-    name: "Conselho Europeu",
-    role: "Definição de Orientação Política",
-    location: "Bruxelas (Bélgica)",
-    description: "Composto pelos chefes de Estado ou de Governo, define as prioridades políticas gerais e a orientação da UE."
+    name: { pt: "Conselho Europeu", en: "European Council", fr: "Conseil européen" },
+    role: { pt: "Definição de Orientação Política", en: "Political Direction", fr: "Orientation politique" },
+    location: { pt: "Bruxelas (Bélgica)", en: "Brussels (Belgium)", fr: "Bruxelles (Belgique)" },
+    description: {
+      pt: "Composto pelos chefes de Estado ou de Governo, define as prioridades políticas gerais e a orientação da UE.",
+      en: "Composed of heads of state or government, it defines general political priorities and the orientation of the EU.",
+      fr: "Composé des chefs d'État ou de gouvernement, il définit les priorités politiques générales et l'orientation de l'UE."
+    }
   },
   {
-    name: "Comissão Europeia",
-    role: "Poder Executivo",
-    location: "Bruxelas (Bélgica)",
-    description: "Propõe novas leis e garante a aplicação das políticas e dos fundos da UE. Representa os interesses da União como um todo."
+    name: { pt: "Comissão Europeia", en: "European Commission", fr: "Commission européenne" },
+    role: { pt: "Poder Executivo", en: "Executive Power", fr: "Pouvoir exécutif" },
+    location: { pt: "Bruxelas (Bélgica)", en: "Brussels (Belgium)", fr: "Bruxelles (Belgique)" },
+    description: {
+      pt: "Propõe novas leis e garante a aplicação das políticas e dos fundos da UE. Representa os interesses da União como um todo.",
+      en: "Proposes new laws and ensures the implementation of EU policies and funds. Represents the interests of the Union as a whole.",
+      fr: "Propose de nouvelles lois et garantit l'application des politiques et des fonds de l'UE. Représente les intérêts de l'Union dans son ensemble."
+    }
   },
   {
-    name: "Tribunal de Justiça da UE",
-    role: "Poder Judicial",
-    location: "Luxemburgo",
-    description: "Garante o respeito pelo direito europeu e a interpretação uniforme dos tratados em todos os países membros."
+    name: { pt: "Tribunal de Justiça da UE", en: "Court of Justice of the EU", fr: "Cour de justice de l'UE" },
+    role: { pt: "Poder Judicial", en: "Judicial Power", fr: "Pouvoir judiciaire" },
+    location: { pt: "Luxemburgo", en: "Luxembourg", fr: "Luxembourg" },
+    description: {
+      pt: "Garante o respeito pelo direito europeu e a interpretação uniforme dos tratados em todos os países membros.",
+      en: "Ensures respect for European law and the uniform interpretation of treaties in all member countries.",
+      fr: "Garantit le respect do droit européen et l'interprétation uniforme des traités dans tous les pays membres."
+    }
   },
   {
-    name: "Banco Central Europeu (BCE)",
-    role: "Estabilidade de Preços",
-    location: "Frankfurt (Alemanha)",
-    description: "Gere o euro e mantém a estabilidade de preços na zona euro."
+    name: { pt: "Banco Central Europeu (BCE)", en: "European Central Bank (ECB)", fr: "Banque centrale européenne (BCE)" },
+    role: { pt: "Estabilidade de Preços", en: "Price Stability", fr: "Stabilité des prix" },
+    location: { pt: "Frankfurt (Alemanha)", en: "Frankfurt (Germany)", fr: "Francfort (Allemagne)" },
+    description: {
+      pt: "Gere o euro e mantém a estabilidade de preços na zona euro.",
+      en: "Manages the euro and maintains price stability in the eurozone.",
+      fr: "Gère l'euro et maintient la stabilité des prix dans la zone euro."
+    }
   }
 ];
