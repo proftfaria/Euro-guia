@@ -190,6 +190,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('inicio');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isImageZoomed, setIsImageZoomed] = useState(false);
+  const [isMapZoomed, setIsMapZoomed] = useState(false);
   
   const t = translations[lang];
 
@@ -613,6 +614,28 @@ export default function App() {
                     <p className="text-[9px] text-slate-400 uppercase tracking-widest border-t border-slate-50 pt-4">Consultar Guia</p>
                   </button>
                 ))}
+              </div>
+
+              {/* Mapa da União Europeia */}
+              <div className="bg-white border border-editorial-border p-6 shadow-editorial group">
+                <header className="mb-6 text-center">
+                  <p className="micro-label text-eu-blue mb-2">{(t as any).nav.mapa}</p>
+                  <h3 className="heading-serif text-3xl md:text-4xl text-editorial-ink">Mapa, Capitais e Monumentos</h3>
+                  <p className="text-slate-500 italic font-light mt-2 max-w-2xl mx-auto">
+                    Conheça os países da União Europeia, as suas capitais e os monumentos mais emblemáticos de cada um.
+                  </p>
+                </header>
+                <img 
+                  src="/mapa-uniao-europeia.jpg" 
+                  alt="Mapa da União Europeia" 
+                  className="w-full h-auto border border-editorial-ink/10 rounded-sm cursor-zoom-in transition-all duration-300 hover:opacity-95 hover:shadow-lg"
+                  onClick={() => setIsMapZoomed(true)}
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.onerror = null;
+                    target.src = "https://placehold.co/1200x800/e2e8f0/1e293b?text=Por+favor,+faça+upload+de+mapa-uniao-europeia.jpg+na+pasta+public";
+                  }}
+                />
               </div>
             </motion.div>
           )}
@@ -1301,6 +1324,45 @@ export default function App() {
               />
               <button
                 onClick={() => setIsImageZoomed(false)}
+                className="absolute -top-12 right-0 md:-right-12 md:top-0 text-white hover:text-eu-gold transition-colors bg-white/10 p-2 rounded-full backdrop-blur-md"
+              >
+                <X size={24} />
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Zoomed Map Modal */}
+      <AnimatePresence>
+        {isMapZoomed && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 md:p-8 cursor-zoom-out"
+            onClick={() => setIsMapZoomed(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="relative max-w-full max-h-full flex items-center justify-center"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <img
+                src="/mapa-uniao-europeia.jpg"
+                alt="Mapa da União Europeia Zoom"
+                className="max-w-full max-h-full object-contain rounded-md shadow-2xl"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.onerror = null;
+                  target.src = "https://placehold.co/1200x800/e2e8f0/1e293b?text=Por+favor,+faça+upload+de+mapa-uniao-europeia.jpg+na+pasta+public";
+                }}
+              />
+              <button
+                onClick={() => setIsMapZoomed(false)}
                 className="absolute -top-12 right-0 md:-right-12 md:top-0 text-white hover:text-eu-gold transition-colors bg-white/10 p-2 rounded-full backdrop-blur-md"
               >
                 <X size={24} />
