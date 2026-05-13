@@ -6,6 +6,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import bandaDesenhadaImg from './assets/images/banda-desenhada.jpg';
+import mapaUniaoEuropeiaImg from './assets/images/mapa-uniao-europeia.jpg';
 import { 
   History, 
   Map as MapIcon, 
@@ -626,15 +627,10 @@ export default function App() {
                   </p>
                 </header>
                 <img 
-                  src="/mapa-uniao-europeia.jpg" 
+                  src={mapaUniaoEuropeiaImg} 
                   alt="Mapa da União Europeia" 
                   className="w-full h-auto border border-editorial-ink/10 rounded-sm cursor-zoom-in transition-all duration-300 hover:opacity-95 hover:shadow-lg"
                   onClick={() => setIsMapZoomed(true)}
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.onerror = null;
-                    target.src = "https://placehold.co/1200x800/e2e8f0/1e293b?text=Por+favor,+faça+upload+de+mapa-uniao-europeia.jpg+na+pasta+public";
-                  }}
                 />
               </div>
             </motion.div>
@@ -1352,14 +1348,9 @@ export default function App() {
               onClick={(e) => e.stopPropagation()}
             >
               <img
-                src="/mapa-uniao-europeia.jpg"
+                src={mapaUniaoEuropeiaImg}
                 alt="Mapa da União Europeia Zoom"
                 className="max-w-full max-h-full object-contain rounded-md shadow-2xl"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.onerror = null;
-                  target.src = "https://placehold.co/1200x800/e2e8f0/1e293b?text=Por+favor,+faça+upload+de+mapa-uniao-europeia.jpg+na+pasta+public";
-                }}
               />
               <button
                 onClick={() => setIsMapZoomed(false)}
