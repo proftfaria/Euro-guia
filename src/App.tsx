@@ -189,6 +189,7 @@ export default function App() {
   const [lang, setLang] = useState<'pt' | 'en' | 'fr'>('pt');
   const [activeTab, setActiveTab] = useState('inicio');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isImageZoomed, setIsImageZoomed] = useState(false);
   
   const t = translations[lang];
 
@@ -1109,7 +1110,8 @@ export default function App() {
                  <img 
                    src={bandaDesenhadaImg} 
                    alt={(t as any).instituicoes.comicTitle} 
-                   className="w-full h-auto border border-editorial-ink/10 rounded-sm"
+                   className="w-full h-auto border border-editorial-ink/10 rounded-sm cursor-zoom-in transition-transform hover:opacity-95"
+                   onClick={() => setIsImageZoomed(true)}
                  />
               </div>
 
@@ -1273,6 +1275,40 @@ export default function App() {
           )}
         </AnimatePresence>
       </main>
+
+      {/* Zoomed Image Modal */}
+      <AnimatePresence>
+        {isImageZoomed && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 md:p-8 cursor-zoom-out"
+            onClick={() => setIsImageZoomed(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="relative max-w-full max-h-full flex items-center justify-center"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <img
+                src={bandaDesenhadaImg}
+                alt="Zoomed comic"
+                className="max-w-full max-h-full object-contain rounded-md shadow-2xl"
+              />
+              <button
+                onClick={() => setIsImageZoomed(false)}
+                className="absolute -top-12 right-0 md:-right-12 md:top-0 text-white hover:text-eu-gold transition-colors bg-white/10 p-2 rounded-full backdrop-blur-md"
+              >
+                <X size={24} />
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Mobile Drawer (Overlay) */}
       <AnimatePresence>
