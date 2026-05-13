@@ -26,7 +26,10 @@ export const translations = {
       quote: "\"A União não é um super-Estado, mas uma associação de Estados soberanos regidos por tratados internacionais que definem as suas competências exclusivas e partilhadas.\"",
       roma: "Roma",
       maastricht: "Maastricht",
-      lisboa: "Lisboa"
+      lisboa: "Lisboa",
+      comicTag: "Banda Desenhada",
+      comicTitle: "O Miguel Descobre a União Europeia",
+      comicDesc: "Como funcionam e onde se localizam as principais instituições europeias."
     },
     common: {
       score: "Pontuação",
@@ -74,7 +77,10 @@ export const translations = {
       quote: "\"The Union is not a super-State, but an association of sovereign States governed by international treaties that define their exclusive and shared competences.\"",
       roma: "Rome",
       maastricht: "Maastricht",
-      lisboa: "Lisbon"
+      lisboa: "Lisbon",
+      comicTag: "Comic Strip",
+      comicTitle: "Miguel Discovers the European Union",
+      comicDesc: "How the main European institutions work and where they are located."
     },
     common: {
       score: "Score",
@@ -122,7 +128,10 @@ export const translations = {
       quote: "\"L'Union n'est pas un super-État, mais une association d'États souverains régis par des traités internationaux qui définissent leurs compétences exclusives et partagées.\"",
       roma: "Rome",
       maastricht: "Maastricht",
-      lisboa: "Lisbonne"
+      lisboa: "Lisbonne",
+      comicTag: "Bande Dessinée",
+      comicTitle: "Miguel Découvre l'Union Européenne",
+      comicDesc: "Comment fonctionnent et où se situent les principales institutions européennes."
     },
     common: {
       score: "Score",

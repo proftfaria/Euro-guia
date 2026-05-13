@@ -1101,13 +1101,13 @@ export default function App() {
 
               <div className="my-16 border border-editorial-border bg-white p-6 shadow-editorial">
                  <header className="mb-6 text-center">
-                   <p className="micro-label text-eu-blue mb-2">Banda Desenhada</p>
-                   <h3 className="heading-serif text-3xl md:text-4xl">O Miguel Descobre a União Europeia</h3>
-                   <p className="text-slate-500 italic font-light mt-2">Como funcionam e onde se localizam as principais instituições europeias.</p>
+                   <p className="micro-label text-eu-blue mb-2">{(t as any).instituicoes.comicTag}</p>
+                   <h3 className="heading-serif text-3xl md:text-4xl">{(t as any).instituicoes.comicTitle}</h3>
+                   <p className="text-slate-500 italic font-light mt-2">{(t as any).instituicoes.comicDesc}</p>
                  </header>
                  <img 
                    src="/banda-desenhada.jpg" 
-                   alt="Banda desenhada: O Miguel Descobre a União Europeia" 
+                   alt={(t as any).instituicoes.comicTitle} 
                    className="w-full h-auto border border-editorial-ink/10 rounded-sm"
                  />
               </div>
