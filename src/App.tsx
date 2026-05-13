@@ -210,16 +210,29 @@ export default function App() {
 
   // --- Capitais Quiz State ---
   const [quizScore, setQuizScore] = useState(0);
+  const [quizTurn, setQuizTurn] = useState(0);
   const [quizQuestion, setQuizQuestion] = useState<{country: any, options: any[]} | null>(null);
   const [feedback, setFeedback] = useState<{ msg: string, type: 'success' | 'error' | null, explanation?: string }>({ msg: "", type: null });
 
   const generateQuestion = () => {
+    if (quizTurn >= 20) {
+      setQuizQuestion(null);
+      return;
+    }
     const randomCountry = euCountries[Math.floor(Math.random() * euCountries.length)];
     const others = euCountries.filter(c => c.id !== randomCountry.id)
       .sort(() => 0.5 - Math.random())
       .slice(0, 3);
     const options = [randomCountry, ...others].sort(() => 0.5 - Math.random());
     setQuizQuestion({ country: randomCountry, options });
+    setFeedback({ msg: "", type: null });
+    setQuizTurn(prev => prev + 1);
+  };
+  
+  const restartQuizGame = () => {
+    setQuizScore(0);
+    setQuizTurn(0);
+    setQuizQuestion(null);
     setFeedback({ msg: "", type: null });
   };
 
@@ -234,7 +247,7 @@ export default function App() {
     if (optionId === currentQ.correct) {
       setSuperQuizScore(prev => prev + 1);
       setSuperQuizFeedback(currentQ.explanation[lang]);
-      if (superQuizScore + 1 >= 5) addBadge('euro_expert');
+      if (superQuizScore + 1 >= 10) addBadge('euro_expert');
     } else {
       setSuperQuizFeedback(`Incorreto. ${currentQ.explanation[lang]}`);
     }
@@ -250,11 +263,16 @@ export default function App() {
 
   // --- Adesão Quiz State ---
   const [adhScore, setAdhScore] = useState(0);
+  const [adhTurn, setAdhTurn] = useState(0);
   const [adhQuestion, setAdhQuestion] = useState<{year: number, options: any[], targets: string[]} | null>(null);
   const [adhSelectedIds, setAdhSelectedIds] = useState<string[]>([]);
   const [adhFeedback, setAdhFeedback] = useState<{ msg: string, type: 'success' | 'error' | null, explanation?: string }>({ msg: "", type: null });
 
   const generateAdhQuestion = () => {
+    if (adhTurn >= 20) {
+      setAdhQuestion(null);
+      return;
+    }
     const uniqueYears = Array.from(new Set(euCountries.map(c => c.joined))).sort((a, b) => a - b);
     const randomYear = uniqueYears[Math.floor(Math.random() * uniqueYears.length)];
     const correctCountries = euCountries.filter(c => c.joined === randomYear);
@@ -266,6 +284,15 @@ export default function App() {
       options: finalOptions, 
       targets: finalOptions.filter(o => o.joined === randomYear).map(o => o.id) 
     });
+    setAdhSelectedIds([]);
+    setAdhFeedback({ msg: "", type: null });
+    setAdhTurn(prev => prev + 1);
+  };
+  
+  const restartAdhGame = () => {
+    setAdhScore(0);
+    setAdhTurn(0);
+    setAdhQuestion(null);
     setAdhSelectedIds([]);
     setAdhFeedback({ msg: "", type: null });
   };
@@ -287,7 +314,7 @@ export default function App() {
 
     if (isCorrect) {
       setAdhScore(prev => prev + 1);
-      if (adhScore + 1 >= 5) addBadge('geo_elite');
+      if (adhScore + 1 >= 10) addBadge('master_hist');
       setAdhFeedback({ 
         msg: t.common.correct, 
         type: 'success',
@@ -328,10 +355,15 @@ export default function App() {
 
   // --- Monument Challenge State ---
   const [monScore, setMonScore] = useState(0);
+  const [monTurn, setMonTurn] = useState(0);
   const [monQuestion, setMonQuestion] = useState<{monument: string, correctCountry: any, options: any[]} | null>(null);
   const [monFeedback, setMonFeedback] = useState<{ msg: string, type: 'success' | 'error' | null, explanation?: string }>({ msg: "", type: null });
 
   const generateMonQuestion = () => {
+    if (monTurn >= 20) {
+      setMonQuestion(null);
+      return;
+    }
     const randomCountry = euCountries[Math.floor(Math.random() * euCountries.length)];
     const monument = randomCountry.monuments[Math.floor(Math.random() * randomCountry.monuments.length)];
     const others = euCountries.filter(c => c.id !== randomCountry.id)
@@ -339,6 +371,14 @@ export default function App() {
       .slice(0, 3);
     const options = [randomCountry, ...others].sort(() => 0.5 - Math.random());
     setMonQuestion({ monument, correctCountry: randomCountry, options });
+    setMonFeedback({ msg: "", type: null });
+    setMonTurn(prev => prev + 1);
+  };
+  
+  const restartMonGame = () => {
+    setMonScore(0);
+    setMonTurn(0);
+    setMonQuestion(null);
     setMonFeedback({ msg: "", type: null });
   };
 
@@ -367,9 +407,9 @@ export default function App() {
 
   // Inicializar perguntas
   useEffect(() => {
-    if (!quizQuestion && activeTab === 'mapa') generateQuestion();
-    if (!adhQuestion && activeTab === 'adesao') generateAdhQuestion();
-    if (!monQuestion && activeTab === 'monumentos') generateMonQuestion();
+    if (!quizQuestion && activeTab === 'mapa' && quizTurn === 0) generateQuestion();
+    if (!adhQuestion && activeTab === 'adesao' && adhTurn === 0) generateAdhQuestion();
+    if (!monQuestion && activeTab === 'monumentos' && monTurn === 0) generateMonQuestion();
   }, [activeTab]);
 
   const tabs = [
@@ -587,14 +627,33 @@ export default function App() {
                   <p className="text-slate-500 max-w-lg italic font-light">Ligue cada país à sua capital correspondente para acumular pontos.</p>
                 </div>
                 <div className="flex items-center gap-4 bg-white px-6 py-3 border border-editorial-border shadow-editorial">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{t.common.score}</span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Progresso</span>
+                  <span className="heading-serif text-3xl text-eu-blue">{quizTurn > 0 ? quizTurn : 0} / 20</span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-4">{t.common.score}</span>
                   <span className="heading-serif text-3xl text-eu-blue">{quizScore}</span>
                 </div>
               </header>
 
               <div className="max-w-4xl mx-auto">
                 <AnimatePresence mode="wait">
-                  {quizQuestion && (
+                  {quizTurn > 20 || !quizQuestion ? (
+                    <motion.div 
+                      key="quiz-end"
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="bg-white p-12 border border-editorial-border shadow-editorial text-center space-y-8"
+                    >
+                      <Trophy size={48} className="mx-auto text-eu-gold" />
+                      <h3 className="heading-serif text-4xl">Fim do Desafio!</h3>
+                      <p className="text-xl text-slate-600">Conseguiu <span className="font-bold text-eu-blue">{quizScore}</span> pontos em 20 tentativas.</p>
+                      <button 
+                        onClick={() => { restartQuizGame(); setTimeout(generateQuestion, 100); }}
+                        className="px-8 py-4 bg-editorial-ink text-white heading-serif text-xl uppercase inline-block shadow-xl hover:bg-eu-blue transition-colors"
+                      >
+                        Jogar Novamente
+                      </button>
+                    </motion.div>
+                  ) : (
                     <motion.div 
                       key={quizQuestion.country.id}
                       initial={{ opacity: 0, y: 20 }}
@@ -665,14 +724,33 @@ export default function App() {
                   <p className="text-slate-500 max-w-lg italic font-light">Identifique o país onde se localiza cada monumento icónico da Europa.</p>
                 </div>
                 <div className="flex items-center gap-4 bg-white px-6 py-3 border border-editorial-border shadow-editorial">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Pontos</span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Progresso</span>
+                  <span className="heading-serif text-3xl text-eu-blue">{monTurn > 0 ? monTurn : 0} / 20</span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-4">Pontos</span>
                   <span className="heading-serif text-3xl text-eu-blue">{monScore}</span>
                 </div>
               </header>
 
               <div className="max-w-4xl mx-auto">
                 <AnimatePresence mode="wait">
-                  {monQuestion && (
+                  {monTurn > 20 || !monQuestion ? (
+                    <motion.div 
+                      key="mon-end"
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="bg-white p-12 border border-editorial-border shadow-editorial text-center space-y-8"
+                    >
+                      <Trophy size={48} className="mx-auto text-eu-gold" />
+                      <h3 className="heading-serif text-4xl">Fim do Desafio!</h3>
+                      <p className="text-xl text-slate-600">Conseguiu <span className="font-bold text-eu-blue">{monScore}</span> pontos em 20 tentativas.</p>
+                      <button 
+                        onClick={() => { restartMonGame(); setTimeout(generateMonQuestion, 100); }}
+                        className="px-8 py-4 bg-editorial-ink text-white heading-serif text-xl uppercase inline-block shadow-xl hover:bg-eu-blue transition-colors"
+                      >
+                        Jogar Novamente
+                      </button>
+                    </motion.div>
+                  ) : (
                     <motion.div 
                       key={monQuestion.monument}
                       initial={{ opacity: 0, y: 20 }}
@@ -742,10 +820,6 @@ export default function App() {
               <header className="border-b border-editorial-ink pb-12">
                 <p className="micro-label text-eu-blue opacity-100">{t.nav.glossario}</p>
                 <h2 className="heading-serif text-6xl">Léxico Europeu</h2>
-                <div className="mt-8 flex items-center bg-white border border-editorial-border p-4 max-w-md">
-                   <Search size={16} className="text-slate-300 mr-4" />
-                   <input type="text" placeholder="Pesquisar termo..." className="text-sm w-full outline-none italic font-light" />
-                </div>
               </header>
 
               <div className="grid md:grid-cols-2 gap-8">
@@ -879,14 +953,33 @@ export default function App() {
                   <p className="text-slate-500 max-w-lg italic font-light">Identifique todos os países que aderiram à União Europeia no ano indicado.</p>
                 </div>
                 <div className="flex items-center gap-4 bg-white px-6 py-3 border border-editorial-border shadow-editorial">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Pontos</span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Progresso</span>
+                  <span className="heading-serif text-3xl text-eu-blue">{adhTurn > 0 ? adhTurn : 0} / 20</span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-4">Pontos</span>
                   <span className="heading-serif text-3xl text-eu-blue">{adhScore}</span>
                 </div>
               </header>
 
               <div className="max-w-4xl mx-auto">
                 <AnimatePresence mode="wait">
-                  {adhQuestion && (
+                  {adhTurn > 20 || !adhQuestion ? (
+                    <motion.div 
+                      key="adh-end"
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="bg-white p-12 border border-editorial-border shadow-editorial text-center space-y-8"
+                    >
+                      <Trophy size={48} className="mx-auto text-eu-gold" />
+                      <h3 className="heading-serif text-4xl">Fim do Desafio!</h3>
+                      <p className="text-xl text-slate-600">Conseguiu <span className="font-bold text-eu-blue">{adhScore}</span> pontos em 20 tentativas.</p>
+                      <button 
+                        onClick={() => { restartAdhGame(); setTimeout(generateAdhQuestion, 100); }}
+                        className="px-8 py-4 bg-editorial-ink text-white heading-serif text-xl uppercase inline-block shadow-xl hover:bg-eu-blue transition-colors"
+                      >
+                        Jogar Novamente
+                      </button>
+                    </motion.div>
+                  ) : (
                     <motion.div 
                       key={adhQuestion.year}
                       initial={{ opacity: 0, scale: 0.98 }}
@@ -1134,6 +1227,18 @@ export default function App() {
                     <p className="text-sm text-slate-600 leading-relaxed">
                       Adivinhe o país de origem de vários monumentos europeus famosos. Uma excelente forma de aprender sobre o património cultural da União.
                     </p>
+                  </div>
+
+                  <div className="asymmetric-card border-l-eu-gold">
+                    <div className="flex items-center gap-4 mb-4">
+                      <Trophy className="text-eu-blue" />
+                      <h3 className="heading-serif text-2xl">Medalhas de Mérito</h3>
+                    </div>
+                    <ul className="space-y-4 text-sm text-slate-600 leading-relaxed list-disc list-inside">
+                      <li><strong className="text-eu-blue">Elite Geográfica:</strong> Obtenha pelo menos 10 pontos no Jogo de Capitais ou Monumentos.</li>
+                      <li><strong className="text-eu-blue">Mestre da História:</strong> Obtenha pelo menos 10 pontos no Desafio de Adesão.</li>
+                      <li><strong className="text-eu-blue">Euro Especialista:</strong> Conclua o Super Quiz com um mínimo de 10 respostas corretas.</li>
+                    </ul>
                   </div>
 
                   <div className="asymmetric-card">
